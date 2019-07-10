@@ -3,7 +3,7 @@ const BASE_PATH = path.join(__dirname, 'server', 'db')
 module.exports = {
   development: {
     client: 'postgresql',
-    connection: 'postgres://postgres:Postgres2018!@localhost:5432/mose_api',
+    connection: 'postgres://postgres:Postgres2019!@localhost:15432/mose_api',
     pool: {
       min: 2,
       max: 10

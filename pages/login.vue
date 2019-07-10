@@ -20,6 +20,12 @@
                 >
                 </b-input>
               </b-field>
+              <div class="field">
+                <label class="checkbox">
+                  <input v-model="remember" type="checkbox" />
+                  Lembrar me
+                </label>
+              </div>
               <b-button
                 class="is-large"
                 type="is-info"
@@ -44,19 +50,26 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      remember: false
     }
   },
   methods: {
     async handleLogin() {
       try {
-        await this.$store.dispatch('auth/login').then(() => {
-          if (this.remember) {
-            localStorage.setItem('lastLogin', this.username)
-          }
-        })
+        await this.$store
+          .dispatch('auth/login', {
+            email: this.email,
+            password: this.password
+          })
+          .then(() => {
+            if (this.remember) {
+              localStorage.setItem('lastLogin', this.username)
+            }
+            this.$router.push('/')
+          })
       } catch (e) {
-        this.$toast.open({ type: 'is-danger', message: 'ocorreu um erro' })
+        this.$toast.open({ type: 'is-danger', message: e })
       }
     }
   }

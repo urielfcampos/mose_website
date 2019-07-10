@@ -1,29 +1,14 @@
 const Koa = require('koa')
 const consola = require('consola')
-const bodyParser = require('koa-bodyparser')
-const session = require('koa-session')
-const passport = require('koa-passport')
 const { Nuxt, Builder } = require('nuxt')
 
 // Import and Set Nuxt.js options
 const config = require('../nuxt.config.js')
-const auth = require('./routes/auth')
+const router = require('./router')
 
 const app = new Koa()
 
-// session control
-// TODO: key should be in process.env
-app.keys = ['placeholder']
-app.use(session(app))
-
-// body parser
-app.use(bodyParser())
-
-// Auth
-require('./auth')
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(auth.routes())
+app.use(router.routes())
 config.dev = !(app.env === 'production')
 
 async function start() {

@@ -28,36 +28,22 @@ export const getters = {
 }
 
 export const actions = {
-  login({ commit }, { username, password }) {
-    return this.$services.users
-      .login(username, password)
-      .then(({ token, user }) => {
-        this.$axios.setToken(token, 'Bearer')
-        commit('setToken', token)
-        return commit('setUser', user)
-      })
+  login({ commit }, { email, password }) {
+    const payload = { email, password }
+    return this.$axios.post('/api/auth/', payload).then((res) => {
+      this.$axios.setToken(res.data.token, 'Bearer')
+      commit('setToken', res.data.token)
+      return commit('setUser', res.data.user[0])
+    })
   },
 
-  register(
-    { commit, dispatch },
-    { email, username, password, role, fullName }
-  ) {
-    return this.$services.users.create({
+  register({ commit, dispatch }, { email, password, role, fullName }) {
+    return this.axios.post('/api/users', {
       email,
-      username,
       password,
       role,
       fullName
     })
-  },
-  update({ commit }, { id, username, password, fullName }) {
-    return this.$services.users
-      .update({ username, password, fullName }, id)
-      .then((res) => {
-        if ((id === state.user, id)) {
-          commit('setUser', res.data)
-        }
-      })
   },
 
   logout({ commit }) {
