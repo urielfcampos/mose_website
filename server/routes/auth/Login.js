@@ -21,8 +21,6 @@ module.exports = async function login(ctx) {
   }
 
   try {
-    // eslint-disable-next-line no-console
-    console.log(password, user[0].password)
     if (!comparePass(password, user[0].password)) {
       throw Error('Invalid credentials')
     }

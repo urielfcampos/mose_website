@@ -6,6 +6,7 @@ const errors = require('../shared/errors')
 const auth = require('./routes/auth')
 const users = require('./routes/users')
 const config = require('./config')
+const frontend = require('./routes/frontend')
 const router = new Router()
 
 const api = new Router({ prefix: '/api' })
@@ -28,7 +29,8 @@ api.all('/*', (ctx) => {
   ctx.status = 404
   ctx.body = { code: errors.NOT_FOUND }
 })
-
+// Frontend Fallback Route
+router.get('*', frontend.Render)
 // Connect API routes to main router
 router.use(api.routes())
 router.use(api.allowedMethods())

@@ -29,8 +29,6 @@ function getUsersById(id) {
     })
 }
 function getUsersByEmail(email) {
-  // eslint-disable-next-line no-console
-  console.log(email)
   if (email === undefined) {
     throw new Error(`username is undefined`)
   }

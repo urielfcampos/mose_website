@@ -7,8 +7,6 @@ export function persist(key, value) {
 export function recovery(key) {
   if (process.browser) {
     const saved = localStorage.getItem(key)
-    // eslint-disable-next-line no-console
-    console.log('key', key, saved)
     return saved ? JSON.parse(saved) : false
   }
 }
