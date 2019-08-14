@@ -1,9 +1,13 @@
 <template>
-  <section class="hero is-info is-fullheight">
+  <section class="hero is-fullheight">
     <div class="hero-body has-text-centered">
       <div class="container">
         <div class="columns is-centered">
-          <div class="column is-4 is-mobile box">
+          <div class="column is-4 is-mobile">
+            <figure class="image is-square">
+              <img src="~/assets/logo-mose-transp.png" alt="Logo mose" />
+            </figure>
+            <br />
             <form class="container" @submit.prevent="handleLogin">
               <b-field label="E-mail">
                 <b-input
@@ -20,12 +24,9 @@
                 >
                 </b-input>
               </b-field>
-              <div class="field">
-                <label class="checkbox">
-                  <input v-model="remember" type="checkbox" />
-                  Lembrar me
-                </label>
-              </div>
+              <b-field label="Lembrar-me">
+                <b-checkbox v-model="remember" type="checkbox" />
+              </b-field>
               <b-button
                 class="is-large"
                 type="is-info"
@@ -36,6 +37,10 @@
                 Fazer login
               </b-button>
             </form>
+            <br />
+            <a class="text-muted">
+              Esqueci minha senha
+            </a>
           </div>
         </div>
       </div>
