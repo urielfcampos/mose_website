@@ -26,9 +26,11 @@
     "koa-jwt": "^3.5.1",
     "koa-router": "^7.4.0",
     "koa-session": "^5.12.0",
+    "node-sass": "^4.12.0",
     "nuxt": "^2.0.0",
     "nuxt-buefy": "^0.3.2",
-    "pg": "^7.11.0"
+    "pg": "^7.11.0",
+    "sass-loader": "^7.2.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^0.0.1",

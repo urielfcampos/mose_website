@@ -23,7 +23,7 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: [],
+  css: ['assets/mose_theme.scss'],
   /*
    ** Plugins to load before mounting the App
    */
@@ -38,6 +38,7 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/eslint-module'
   ],
+
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options

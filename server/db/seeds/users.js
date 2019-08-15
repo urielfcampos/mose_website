@@ -1,7 +1,7 @@
 const bcrypt = require('bcryptjs')
 exports.seed = function(knex) {
   const salt = bcrypt.genSaltSync()
-  const hash = bcrypt.hashSync('johnson', salt)
+  const hash = bcrypt.hashSync('admin', salt)
   // Deletes ALL existing entries
   return knex('users')
     .del()
@@ -10,7 +10,7 @@ exports.seed = function(knex) {
       return knex('users').insert([
         {
           id: 1,
-          email: 'urielfcampos95@gmail.com',
+          email: 'admin',
           password: hash,
           fullName: 'Uriel',
           role: 'admin'

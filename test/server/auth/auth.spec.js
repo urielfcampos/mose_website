@@ -25,11 +25,11 @@ describe('routes : auth', () => {
   })
 })
 
-describe('GET /auth/register', () => {
-  it('should render the register view', (done) => {
+describe('POST /auth/login', () => {
+  it('It should login', (done) => {
     chai
       .request(server)
-      .get('/auth/register')
+      .post('/auth/login')
       .end((err, res) => {
         should.not.exist(err)
         res.redirects.length.should.eql(0)
