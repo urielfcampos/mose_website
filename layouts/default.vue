@@ -3,9 +3,18 @@
     <section class="main-content columns">
       <aside class="column is-2 section menu-column">
         <ul class="menu-list">
+          <li>
+            <nuxt-link to="/"> <b-icon icon="home" /> Home </nuxt-link>
+          </li>
+        </ul>
+        <p class="menu-label is-hidden-touch">
+          <b-icon icon="account" />
+          Usuários
+        </p>
+        <ul class="menu-list">
           <li v-for="(item, key) of items" :key="key">
             <nuxt-link :to="item.to" exact-active-class="is-active">
-              <b-icon :icon="item.icon" /> {{ item.title }}
+              {{ item.title }}
             </nuxt-link>
           </li>
         </ul>
@@ -24,14 +33,12 @@ export default {
     return {
       items: [
         {
-          title: 'Home',
-          icon: 'home',
-          to: { name: 'index' }
+          title: 'Cadastrar',
+          to: { name: 'usuarios-cadastrar' }
         },
         {
-          title: 'Usuários',
-          icon: 'person',
-          to: { name: 'usuarios-cadastrar' }
+          title: 'Visualizar',
+          to: { name: 'usuarios-visualizar' }
         }
       ]
     }

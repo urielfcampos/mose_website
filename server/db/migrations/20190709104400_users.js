@@ -8,6 +8,9 @@ exports.up = function(knex) {
       .string('email')
       .notNullable()
       .unique()
+    table.string('state').notNullable()
+    table.string('phoneNumber').notNullable()
+    table.string('fieldOfWork').notNullable()
   })
 }
 

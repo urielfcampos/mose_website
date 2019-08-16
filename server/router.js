@@ -24,6 +24,7 @@ api.get('/auth', isLoggedIn, auth.Show)
 api.post('/auth', bodyJson, auth.Login)
 
 api.get('/users/:id', users.Show)
+api.post('/users', users.Create)
 // Not Found Routes
 api.all('/*', (ctx) => {
   ctx.status = 404
