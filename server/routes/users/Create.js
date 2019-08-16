@@ -2,11 +2,34 @@ const User = require('../../db/queries/users')
 const errors = require('../../../shared/errors')
 
 module.exports = async function createUser(ctx) {
-  const { email, fullName, password, role } = ctx.request.body
-  const user = { email, fullName, password, role }
-  const validRequest = [email, fullName, password, role].every(
-    (item) => item !== undefined
-  )
+  debugger
+  const {
+    email,
+    fullName,
+    password,
+    role,
+    state,
+    phoneNUmber,
+    fieldofWork
+  } = ctx.request.body
+  const user = {
+    email,
+    fullName,
+    password,
+    role,
+    state,
+    phoneNUmber,
+    fieldofWork
+  }
+  const validRequest = [
+    email,
+    fullName,
+    password,
+    role,
+    state,
+    phoneNUmber,
+    fieldofWork
+  ].every((item) => item !== undefined)
   if (!validRequest) {
     ctx.status = 400
     ctx.body = { code: errors.INVALID_REQUEST }

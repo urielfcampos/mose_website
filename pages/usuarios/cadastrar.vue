@@ -61,8 +61,7 @@ export default {
         state: '',
         phoneNumber: '',
         fieldOfWork: '',
-        role: '',
-        canSubmit: true
+        role: ''
       },
       states: [
         {
@@ -184,20 +183,20 @@ export default {
         }
       }
       this.sendForm()
-    }
-  },
-  sendForm() {
-    this.$axios
-      .post('/api/users', this.user)
-      .then((res) => {
-        this.$toast.open({
-          message: 'Usuário cadastrado com sucesso',
-          type: 'is-success'
+    },
+    sendForm() {
+      this.$axios
+        .post('/api/users', this.user)
+        .then((res) => {
+          this.$toast.open({
+            message: 'Usuário cadastrado com sucesso',
+            type: 'is-success'
+          })
         })
-      })
-      .catch((err) => {
-        this.$toast.open({ message: err })
-      })
+        .catch((err) => {
+          this.$toast.open({ message: err })
+        })
+    }
   }
 }
 </script>
