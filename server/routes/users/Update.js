@@ -1,28 +1,7 @@
-const User = require('../../models/User')
+const User = require('../../db/queries/users')
 const errors = require('../../../shared/errors')
-const utils = require('../../utils')
 
 module.exports = async function updateUser(ctx) {
-  {
-    const { valid, invalidParams } = utils.validatePayload(ctx.request.body, [
-      'password',
-      'fullName',
-      'username'
-    ])
-    if (!valid) {
-      ctx.status = 400
-      ctx.body = { code: errors.INVALID_BODY, invalidParams }
-      return
-    }
-  }
-  {
-    const { valid, invalidParams } = utils.validateQuery(ctx.request.query, [])
-    if (!valid) {
-      ctx.status = 400
-      ctx.body = { code: errors.INVALID_QUERY, invalidParams }
-      return
-    }
-  }
   const { id } = ctx.params
   {
     const { user } = ctx.state.user
@@ -34,7 +13,7 @@ module.exports = async function updateUser(ctx) {
   }
   const payload = ctx.request.body
 
-  const user = await User.where({ id }).fetch()
+  const user = await User.getUsersById(id)
   if (user === null) {
     ctx.status = 404
     ctx.body = { code: errors.NOT_FOUND }

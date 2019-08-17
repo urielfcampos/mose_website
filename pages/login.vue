@@ -49,9 +49,11 @@
 </template>
 
 <script>
+import { errorHandler } from '~/front/mixins/errorHandler'
 export default {
   name: 'LoginPage',
   layout: 'empty',
+  mixins: [errorHandler],
   data() {
     return {
       email: '',
@@ -74,7 +76,10 @@ export default {
             this.$router.push('/')
           })
       } catch (e) {
-        this.$toast.open({ type: 'is-danger', message: e })
+        this.$toast.open({
+          type: 'is-danger',
+          message: this.errorMessage(e.response.data.code)
+        })
       }
     }
   }

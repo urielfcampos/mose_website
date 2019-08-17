@@ -13,7 +13,10 @@ exports.seed = function(knex) {
           email: 'admin',
           password: hash,
           fullName: 'Uriel',
-          role: 'admin'
+          role: 'admin',
+          state: 'para',
+          fieldOfWork: 'gastronomia',
+          phoneNumber: '3291-9599'
         }
       ])
     })

@@ -9,8 +9,8 @@ module.exports = async function createUser(ctx) {
     password,
     role,
     state,
-    phoneNUmber,
-    fieldofWork
+    phoneNumber,
+    fieldOfWork
   } = ctx.request.body
   const user = {
     email,
@@ -18,32 +18,45 @@ module.exports = async function createUser(ctx) {
     password,
     role,
     state,
-    phoneNUmber,
-    fieldofWork
+    phoneNumber,
+    fieldOfWork
   }
-  const validRequest = [
-    email,
-    fullName,
-    password,
-    role,
-    state,
-    phoneNUmber,
-    fieldofWork
-  ].every((item) => item !== undefined)
-  if (!validRequest) {
-    ctx.status = 400
-    ctx.body = { code: errors.INVALID_REQUEST }
-    return
+  const status = await validateRequest(user)
+  switch (status) {
+    case 400: {
+      ctx.status = 400
+      ctx.body = errors.MISSING_PARAM
+      return
+    }
+    case 422: {
+      ctx.status = 422
+      ctx.body = errors.UNPROCESSABLE_ENTITY
+      return
+    }
+    case 201: {
+      ctx.status = 201
+      ctx.body = await User.addUser(user)
+      break
+    }
+    default: {
+      ctx.status = 400
+      ctx.body = errors.UNPROCESSABLE_ENTITY
+    }
   }
+}
 
-  const duplicateEmail = !!(await User.getUsersByEmail(email).length)
-
+async function validateRequest(req) {
+  for (const param in req) {
+    if (req[param] === undefined) {
+      return 400
+    }
+  }
+  const email = await User.getUsersByEmail(req.email)
+  const duplicateEmail = (await User.getUsersByEmail(req.email).length) !== 0
+  // eslint-disable-next-line no-console
+  console.log('duplicateEmail', email)
   if (duplicateEmail) {
-    ctx.status = 422
-    ctx.body = { code: errors.UNPROCESSABLE_ENTITY }
-    return
+    return 422
   }
-
-  ctx.status = 201
-  ctx.body = await User.addUser(user)
+  return 201
 }

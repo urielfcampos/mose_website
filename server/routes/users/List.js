@@ -1,9 +1,7 @@
 const User = require('../../db/queries/users')
 
-module.exports = function listUsers(ctx) {
-  const { email } = ctx.request.query
+module.exports = async function listUsers(ctx) {
   const query = User
-  if (email !== undefined) {
-    ctx.body = query.getUsersByEmail(email)
-  }
+  ctx.body = await query.getUsers()
+  ctx.status = 200
 }

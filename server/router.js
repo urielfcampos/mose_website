@@ -23,18 +23,22 @@ const bodyJson = KoaBody()
 api.get('/auth', isLoggedIn, auth.Show)
 api.post('/auth', bodyJson, auth.Login)
 
-api.get('/users/:id', users.Show)
+// Users routes
+api.get('/users/:id', bodyJson, users.Show)
+api.get('/users', bodyJson, users.List)
 api.post('/users', bodyJson, users.Create)
+api.put('/users/:id', bodyJson, users.Update)
+
 // Not Found Routes
 api.all('/*', (ctx) => {
   ctx.status = 404
   ctx.body = { code: errors.NOT_FOUND }
 })
-// Frontend Fallback Route
-router.get('*', frontend.Render)
 // Connect API routes to main router
 router.use(api.routes())
 router.use(api.allowedMethods())
+// Frontend Fallback Route
+router.get('*', frontend.Render)
 
 module.exports = router
 

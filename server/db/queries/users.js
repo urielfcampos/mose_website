@@ -9,20 +9,33 @@ function addUser(user) {
       email: user.email,
       password: hash,
       role: user.role,
-      fullName: user.fullName
+      fullName: user.fullName,
+      state: user.state,
+      phoneNumber: user.phoneNumber,
+      fieldOfWork: user.fieldOfWork
     })
     .returning('*')
 }
 function getUsers() {
   return knex('users')
-    .select('fullName', 'username')
+    .select(
+      'email',
+      'role',
+      'fullName',
+      'state',
+      'phoneNumber',
+      'fieldOfWork',
+      'id'
+    )
     .then((result) => {
+      // eslint-disable-next-line no-console
+      console.log(result)
       return result
     })
 }
 function getUsersById(id) {
   return knex('users')
-    .select('fullName', 'email')
+    .select()
     .where('id', id)
     .then((result) => {
       return result
