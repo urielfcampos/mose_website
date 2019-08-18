@@ -28,8 +28,6 @@ function getUsers() {
       'id'
     )
     .then((result) => {
-      // eslint-disable-next-line no-console
-      console.log(result)
       return result
     })
 }
@@ -52,9 +50,33 @@ function getUsersByEmail(email) {
     })
 }
 
+function deleteUserById(id) {
+  if (id === undefined) {
+    throw new Error('id is undefined')
+  }
+  return knex('users')
+    .where('id', id)
+    .del()
+    .then((result) => {
+      return result
+    })
+}
+function updateUser(user) {
+  if (user === undefined) {
+    throw new Error('user is undefined')
+  }
+  return knex('users')
+    .where('id', user.id)
+    .update(user)
+    .then((result) => {
+      return result
+    })
+}
 module.exports = {
   addUser,
   getUsers,
   getUsersById,
-  getUsersByEmail
+  getUsersByEmail,
+  deleteUserById,
+  updateUser
 }

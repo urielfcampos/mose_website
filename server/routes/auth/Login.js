@@ -31,7 +31,7 @@ module.exports = async function login(ctx) {
   }
 
   const token = utils.signToken(user[0])
-
+  ctx.state.user = user
   ctx.body = { token, user }
 }
 

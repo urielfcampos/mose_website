@@ -5,6 +5,7 @@ const KoaJwt = require('koa-jwt')
 const errors = require('../shared/errors')
 const auth = require('./routes/auth')
 const users = require('./routes/users')
+const examples = require('./routes/examples')
 const config = require('./config')
 const frontend = require('./routes/frontend')
 const router = new Router()
@@ -28,7 +29,10 @@ api.get('/users/:id', bodyJson, users.Show)
 api.get('/users', bodyJson, users.List)
 api.post('/users', bodyJson, users.Create)
 api.put('/users/:id', bodyJson, users.Update)
+api.delete('/users/:id', bodyJson, users.Delete)
 
+// Examples routes
+api.get('/examples/:id', bodyJson, examples.Show)
 // Not Found Routes
 api.all('/*', (ctx) => {
   ctx.status = 404
