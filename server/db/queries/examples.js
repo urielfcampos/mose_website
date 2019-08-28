@@ -4,16 +4,17 @@ async function addExample(example) {
   const artefactId = await knex('artefacts')
     .returning('id')
     .insert(example.artefact)
-  const statisticsId = await knex('statistics')
+  const statisticsId = await knex('statistic')
     .returning('id')
     .insert(example.statistics)
-  const { reason, objective, fieldOfWork } = example
+  const { reason, objective, fieldOfWork, author } = example
   return knex('example').insert({
     reason,
     objective,
     fieldOfWork,
-    artefact_id: artefactId,
-    statistics_id: statisticsId
+    author,
+    artefact_id: artefactId[0],
+    statistics_id: statisticsId[0]
   })
 }
 async function getExampleById(id) {

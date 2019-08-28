@@ -66,7 +66,7 @@ export default {
         },
         {
           title: 'Visualizar',
-          to: { name: 'exemplos-cadastrar' }
+          to: { name: 'exemplos-visualizar' }
         }
       ]
     }

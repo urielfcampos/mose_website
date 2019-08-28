@@ -81,8 +81,6 @@ export default {
   computed: {
     autoFieldOfWork() {
       return this.fields.filter((option) => {
-        // eslint-disable-next-line no-console
-        console.log(option)
         return (
           option
             .toString()

@@ -6,12 +6,13 @@ exports.seed = function(knex) {
       // Inserts seed entries
       return knex('example').insert([
         {
-          id: 1,
+          id: 0,
           reason: 'ExampleReason',
           objective: 'objective',
           fieldOfWork: 'fieldofwork',
-          artefact_id: 1,
-          statistics_id: 1
+          artefact_id: 0,
+          statistics_id: 0,
+          author: 1
         }
       ])
     })

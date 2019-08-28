@@ -4,6 +4,7 @@ exports.up = function(knex) {
     table.string('reason')
     table.string('objective')
     table.string('fieldOfWork')
+    table.integer('author').unsigned()
     table.integer('artefact_id').unsigned()
     table.integer('statistics_id').unsigned()
     table

@@ -35,6 +35,7 @@ api.delete('/users/:id', bodyJson, users.Delete)
 
 // Examples routes
 api.get('/examples/:id', bodyJson, examples.Show)
+api.post('/examples', bodyJson, examples.Create)
 // Not Found Routes
 api.all('/*', (ctx) => {
   ctx.status = 404
