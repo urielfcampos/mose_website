@@ -16,10 +16,17 @@ async function addExample(example) {
     statistics_id: statisticsId
   })
 }
-function getExampleById(id) {
-  return knex('example')
+async function getExampleById(id) {
+  const example = await knex('example')
     .select('*')
-    .leftJoin('artefacts', 'example.artefact_id', 'artefacts.id')
-    .leftJoin('statistic', 'example.statistics_id', 'statistic.id')
+    .where('id', id)
+  const artefact = await knex('artefacts')
+    .select()
+    .where('id', example[0].artefact_id)
+  const statistic = await knex('statistic')
+    .select()
+    .where('id', example[0].statistics_id)
+  const assembledExample = { example, artefact, statistic }
+  return assembledExample
 }
 module.exports = { addExample, getExampleById }
