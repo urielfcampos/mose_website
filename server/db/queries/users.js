@@ -72,11 +72,16 @@ function updateUser(user) {
       return result
     })
 }
+async function getUserFields() {
+  const result = await knex('users').select('fieldOfWork')
+  return result
+}
 module.exports = {
   addUser,
   getUsers,
   getUsersById,
   getUsersByEmail,
   deleteUserById,
-  updateUser
+  updateUser,
+  getUserFields
 }

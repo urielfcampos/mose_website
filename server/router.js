@@ -25,8 +25,10 @@ api.get('/auth', isLoggedIn, auth.Show)
 api.post('/auth', bodyJson, auth.Login)
 
 // Users routes
-api.get('/users/:id', bodyJson, users.Show)
+
 api.get('/users', bodyJson, users.List)
+api.get('/users/fields', users.ListFields)
+api.get('/users/:id', bodyJson, users.Show)
 api.post('/users', bodyJson, users.Create)
 api.put('/users/:id', bodyJson, users.Update)
 api.delete('/users/:id', bodyJson, users.Delete)
