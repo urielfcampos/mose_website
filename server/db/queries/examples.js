@@ -30,4 +30,32 @@ async function getExampleById(id) {
   const assembledExample = { example, artefact, statistic }
   return assembledExample
 }
-module.exports = { addExample, getExampleById }
+async function getExamples() {
+  const examples = await knex('example').select()
+  const authorsIds = []
+  for (const example in examples) {
+    const author = examples[example].author
+    if (author !== null) {
+      authorsIds.push(author)
+    } else {
+      examples[example].author = { fullName: 'Não possui Autor' }
+    }
+  }
+  const authors = await knex('users')
+    .select(['fullName', 'id'])
+    .whereIn('id', authorsIds)
+  for (const example in examples) {
+    const author = examples[example].author
+    for (let i = 0; i <= authors.length; i++) {
+      if (authors[i] !== undefined) {
+        if (authors[i].id === author) {
+          examples[example].author = authors[i]
+        } else {
+          examples[example].author = { fullName: 'Não possui Autor' }
+        }
+      }
+    }
+  }
+  return examples
+}
+module.exports = { addExample, getExampleById, getExamples }

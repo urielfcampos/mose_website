@@ -17,8 +17,6 @@ module.exports = async function createExample(ctx) {
     }
     case 201: {
       ctx.status = 201
-      // eslint-disable-next-line no-console
-      console.log(example)
       ctx.body = await Examples.addExample(example)
       break
     }

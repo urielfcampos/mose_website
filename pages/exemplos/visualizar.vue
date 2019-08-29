@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <b-table
-      :data="users"
+      :data="examples"
       :columns="columns"
       detailed
       detail-key="id"
@@ -14,59 +14,22 @@
     >
       <template slot="detail" slot-scope="props">
         <section class="container">
-          <b-button class="is-info" @click="editUser(props.row)">
+          <b-button class="is-info" @click="editExamples(props.row)">
             Editar
           </b-button>
-          <b-button class="is-info" @click="deactivateUser(props.row.id)">
+          <b-button class="is-info" @click="deleteExample(props.row.id)">
             Inativar
           </b-button>
         </section>
       </template>
     </b-table>
-    <b-modal :active.sync="editUserActivate">
+    <b-modal :active.sync="editExampleActivate">
       <div class="container box">
-        <b-field label="Nome Completo">
-          <b-input v-model="selectedUser.fullName" required></b-input>
-        </b-field>
-        <b-field label="E-mail">
-          <b-input v-model="selectedUser.email" type="email" required></b-input>
-        </b-field>
-        <b-field label="Senha">
-          <b-input
-            v-model="selectedUser.password"
-            type="password"
-            password-reveal
-            required
-          >
-          </b-input>
-        </b-field>
-        <b-field label="Estado">
-          <b-select v-model="selectedUser.state" required>
-            <option disabled value="">Selecione um estado</option>
-            <option v-for="state in states" :key="state.id" :value="state.name">
-              {{ state.name }}
-            </option>
-          </b-select>
-        </b-field>
-        <b-field label="Telefone">
-          <b-input v-model="selectedUser.phoneNumber" required></b-input>
-        </b-field>
-        <b-field label="Área de atuação">
-          <b-input v-model="selectedUser.fieldOfWork" required></b-input>
-        </b-field>
-        <b-field label="Papel">
-          <b-select v-model="selectedUser.role" required>
-            <option disabled value="">Selecione um papel</option>
-            <option value="admin">Administrador</option>
-            <option value="evaluator">Avaliador</option>
-            <option value="auditor">Auditor</option>
-          </b-select>
-        </b-field>
         <br />
         <b-button
           type="submit"
           class="btn is-info"
-          @click="updateUser(selectedUser.id)"
+          @click="updateExample(selectedExample.id)"
         >
           Editar
         </b-button>
@@ -76,43 +39,58 @@
 </template>
 
 <script>
-import { states } from '~/shared/enums'
 import { errorHandler } from '~/front/mixins/errorHandler'
 import { notificationHandler } from '~/front/mixins/notificationHandler'
 export default {
   mixins: [errorHandler, notificationHandler],
   data() {
     return {
-      users: [],
+      examples: [],
       columns: [
-        { field: 'fullName', label: 'Nome' },
-        { field: 'email', label: 'E-mail' },
-        { field: 'state', label: 'Estado' },
-        { field: 'phoneNumber', label: 'Telefone' },
-        { field: 'fieldOfWork', label: 'Área de atuação' },
-        { field: 'role', label: 'Papel' }
+        { field: 'author.fullName', label: 'Autor' },
+        { field: 'reason', label: 'Finalidade' },
+        { field: 'objective', label: 'Objetivo de Competência' },
+        { field: 'fieldOfWork', label: 'Área de atuação' }
       ],
-      editUserActivate: false,
-      selectedUser: {},
-      states
+      editExampleActivate: false,
+      selectedExample: {},
+      activeTab: 0,
+      fields: []
+    }
+  },
+  computed: {
+    autoFieldOfWork() {
+      return this.fields.filter((option) => {
+        return (
+          option
+            .toString()
+            .toLowerCase()
+            .indexOf(this.example.fieldOfWork.toLowerCase()) >= 0
+        )
+      })
     }
   },
   created() {
-    this.getUsers()
+    this.getExamples()
   },
   methods: {
-    getUsers() {
-      this.$axios.get('/api/users').then((res) => {
-        this.users = [...res.data]
+    getExamples() {
+      this.$axios.get('/api/examples').then((res) => {
+        this.examples = [...res.data]
       })
     },
-    editUser(user) {
-      this.editUserActivate = true
-      this.selectedUser = Object.assign({}, user)
+    getExampleById(id) {
+      this.$axios.get(`/api/examples/${id}`).then((res) => {
+        this.selectedExample = Object.assign({}, res.data)
+      })
     },
-    updateUser(id) {
+    editExamples(example) {
+      this.editExampleActivate = true
+      this.getExampleById(example.id)
+    },
+    updateExample(id) {
       this.$axios
-        .put(`/api/users/${id}`, this.selectedUser)
+        .put(`/api/examples/${id}`, this.selectedExample)
         .then((res) => {
           this.openSuccessToast('Usuário editado com sucesso')
           this.getUsers()
@@ -121,10 +99,23 @@ export default {
           this.openDangerToast(this.errorMessage(err.response.data.code))
         })
     },
-    deactivateUser(id) {
-      this.$axios.delete(`/api/users/${id}`).then((res) => {
+    deleteExample(id) {
+      this.$axios.delete(`/api/examples/${id}`).then((res) => {
         this.$toast.open({ message: '' })
       })
+    },
+    getFields() {
+      this.$axios
+        .get('/api/users/fields')
+        .then((res) => {
+          const fields = [...res.data]
+          for (const field in fields) {
+            this.fields.push(fields[field].fieldOfWork)
+          }
+        })
+        .catch((err) => {
+          this.openDangerToast(this.errorMessage(err.response.data.code))
+        })
     }
   }
 }
