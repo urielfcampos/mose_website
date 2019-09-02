@@ -1,7 +1,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable('artefacts', (table) => {
     table.increments()
-    table.string('name')
+    table.string('artefact_name')
     table.string('model')
     table.string('wayOfUse')
   })

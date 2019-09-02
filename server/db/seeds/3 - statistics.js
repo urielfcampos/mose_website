@@ -7,7 +7,7 @@ exports.seed = function(knex) {
       return knex('statistic').insert([
         {
           id: 0,
-          name: 'exampleStatistics',
+          indicator_name: 'exampleStatistics',
           wayOfCollection: 'ExampleCollection',
           wayOfAnalysis: 'exampleAnalysis'
         }

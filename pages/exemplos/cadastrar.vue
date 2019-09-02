@@ -34,7 +34,10 @@
         <b-tabs v-model="activeTab" position="is-centered">
           <b-tab-item label="Artefato">
             <b-field label="Nome">
-              <b-input v-model="example.artefact.name" required></b-input>
+              <b-input
+                v-model="example.artefact.artefact_name"
+                required
+              ></b-input>
             </b-field>
             <b-field label="Modelo">
               <b-input
@@ -56,7 +59,10 @@
           </b-tab-item>
           <b-tab-item label="Indicadores">
             <b-field label="Nome">
-              <b-input v-model="example.statistics.name" required></b-input>
+              <b-input
+                v-model="example.statistics.indicator_name"
+                required
+              ></b-input>
             </b-field>
             <b-field label="Procedimento de coleta">
               <b-input
@@ -98,8 +104,12 @@ export default {
         reason: '',
         objective: '',
         fieldOfWork: '',
-        artefact: { name: '', model: '', wayOfUse: '' },
-        statistics: { name: '', wayOfCollection: '', wayOfAnalysis: '' },
+        artefact: { artefact_name: '', model: '', wayOfUse: '' },
+        statistics: {
+          indicator_name: '',
+          wayOfCollection: '',
+          wayOfAnalysis: ''
+        },
         author: 0
       },
       fields: [],

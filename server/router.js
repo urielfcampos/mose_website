@@ -40,7 +40,11 @@ api.get('/examples/:id', bodyJson, examples.Show)
 api.post('/examples', bodyJson, examples.Create)
 
 // News routes
+api.get('/news', bodyJson, news.List)
 api.post('/news', bodyJson, news.Create)
+api.put('/news/:id', bodyJson, news.Update)
+api.delete('/news/:id', bodyJson, news.Delete)
+
 // Not Found Routes
 api.all('/*', (ctx) => {
   ctx.status = 404
@@ -59,7 +63,7 @@ function getToken(ctx) {
 }
 
 function isLoggedIn(ctx, next) {
-  const hasUser = ctx.state.hasUser
+  const hasUser = ctx.state.user
   const hasToken = ctx.request.get('Authorization')
 
   if (hasToken && !hasUser) {

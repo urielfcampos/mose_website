@@ -56,7 +56,7 @@ export default {
   mixins: [errorHandler],
   data() {
     return {
-      email: '',
+      email: localStorage.getItem('lastLogin') || '',
       password: '',
       remember: false
     }
@@ -71,7 +71,7 @@ export default {
           })
           .then(() => {
             if (this.remember) {
-              localStorage.setItem('lastLogin', this.username)
+              localStorage.setItem('lastLogin', this.email)
             }
             this.$router.push('/')
           })

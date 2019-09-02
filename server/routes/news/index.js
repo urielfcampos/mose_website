@@ -1,3 +1,5 @@
 const Create = require('./Create')
-
-module.exports = { Create }
+const List = require('./List')
+const Update = require('./Update')
+const Delete = require('./Delete')
+module.exports = { Create, List, Update, Delete }

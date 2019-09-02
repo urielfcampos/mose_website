@@ -4,6 +4,7 @@ exports.up = function(knex) {
     table.string('title')
     table.string('bodyText')
     table.date('data')
+    table.integer('author').unsigned()
   })
 }
 

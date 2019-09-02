@@ -1,7 +1,7 @@
 exports.up = function(knex) {
   return knex.schema.createTable('statistic', (table) => {
     table.increments()
-    table.string('name')
+    table.string('indicator_name')
     table.string('wayOfCollection')
     table.string('wayOfAnalysis')
   })

@@ -4,8 +4,6 @@ const errors = require('../../../shared/errors')
 module.exports = async function updateUser(ctx) {
   const { id } = ctx.params
   {
-    // eslint-disable-next-line no-console
-    console.log(ctx.state)
     const { user } = ctx.state.user
     if (user === null || (user.role !== 'admin' && Number(id) !== user.id)) {
       ctx.status = 403

@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <b-table
-      :data="users"
+      :data="news"
       :columns="columns"
       detailed
       detail-key="id"
@@ -14,59 +14,37 @@
     >
       <template slot="detail" slot-scope="props">
         <section class="container">
-          <b-button class="is-info" @click="editUser(props.row)">
+          <b-button class="is-info" @click="editNews(props.row)">
             Editar
           </b-button>
-          <b-button class="is-info" @click="deactivateUser(props.row.id)">
-            Inativar
+          <b-button class="is-info" @click="deleteNews(props.row.id)">
+            Deletar
           </b-button>
         </section>
       </template>
     </b-table>
-    <b-modal :active.sync="editUserActivate">
+    <b-modal :active.sync="editNewsActivate">
       <div class="container box">
-        <b-field label="Nome Completo">
-          <b-input v-model="selectedUser.fullName" required></b-input>
+        <b-field label="Título">
+          <b-input v-model="selectedNews.title" required></b-input>
         </b-field>
-        <b-field label="E-mail">
-          <b-input v-model="selectedUser.email" type="email" required></b-input>
-        </b-field>
-        <b-field label="Senha">
+        <b-field label="Texto">
           <b-input
-            v-model="selectedUser.password"
-            type="password"
-            password-reveal
+            v-model="selectedNews.bodyText"
+            type="textarea"
+            maxlenght="200"
             required
-          >
-          </b-input>
+          ></b-input>
         </b-field>
-        <b-field label="Estado">
-          <b-select v-model="selectedUser.state" required>
-            <option disabled value="">Selecione um estado</option>
-            <option v-for="state in states" :key="state.id" :value="state.name">
-              {{ state.name }}
-            </option>
-          </b-select>
-        </b-field>
-        <b-field label="Telefone">
-          <b-input v-model="selectedUser.phoneNumber" required></b-input>
-        </b-field>
-        <b-field label="Área de atuação">
-          <b-input v-model="selectedUser.fieldOfWork" required></b-input>
-        </b-field>
-        <b-field label="Papel">
-          <b-select v-model="selectedUser.role" required>
-            <option disabled value="">Selecione um papel</option>
-            <option value="admin">Administrador</option>
-            <option value="evaluator">Avaliador</option>
-            <option value="auditor">Auditor</option>
-          </b-select>
+        <b-field label="Data">
+          <b-datepicker v-model="selectedNews.data" icon="calendar-today">
+          </b-datepicker>
         </b-field>
         <br />
         <b-button
           type="submit"
           class="btn is-info"
-          @click="updateUser(selectedUser.id)"
+          @click="updateNews(selectedNews.id)"
         >
           Editar
         </b-button>
@@ -76,54 +54,51 @@
 </template>
 
 <script>
-import { states } from '~/shared/enums'
 import { errorHandler } from '~/front/mixins/errorHandler'
 import { notificationHandler } from '~/front/mixins/notificationHandler'
 export default {
   mixins: [errorHandler, notificationHandler],
   data() {
     return {
-      users: [],
+      news: [],
       columns: [
-        { field: 'fullName', label: 'Nome' },
-        { field: 'email', label: 'E-mail' },
-        { field: 'state', label: 'Estado' },
-        { field: 'phoneNumber', label: 'Telefone' },
-        { field: 'fieldOfWork', label: 'Área de atuação' },
-        { field: 'role', label: 'Papel' }
+        { field: 'title', label: 'Título' },
+        { field: 'data', label: 'Data' },
+        { field: 'fullName', label: 'Autor' }
       ],
-      editUserActivate: false,
-      selectedUser: {},
-      states
+      editNewsActivate: false,
+      selectedNews: {}
     }
   },
-  created() {
-    this.getUsers()
+  async created() {
+    await this.getNews()
   },
   methods: {
-    getUsers() {
-      this.$axios.get('/api/users').then((res) => {
-        this.users = [...res.data]
+    getNews() {
+      this.$axios.get('/api/news').then((res) => {
+        this.news = [...res.data]
       })
     },
-    editUser(user) {
-      this.editUserActivate = true
-      this.selectedUser = Object.assign({}, user)
+    editNews(singleNews) {
+      singleNews.data = new Date(singleNews.data)
+      this.editNewsActivate = true
+      this.selectedNews = Object.assign({}, singleNews)
     },
-    updateUser(id) {
+    updateNews(id) {
       this.$axios
-        .put(`/api/users/${id}`, this.selectedUser)
+        .put(`/api/news/${id}`, this.selectedNews)
         .then((res) => {
-          this.openSuccessToast('Usuário editado com sucesso')
-          this.getUsers()
+          this.openSuccessToast('Notícia editada com sucesso')
+          this.getNews()
         })
         .catch((err) => {
           this.openDangerToast(this.errorMessage(err.response.data.code))
         })
     },
-    deactivateUser(id) {
-      this.$axios.delete(`/api/users/${id}`).then((res) => {
+    deleteNews(id) {
+      this.$axios.delete(`/api/news/${id}`).then((res) => {
         this.$toast.open({ message: '' })
+        this.getNews()
       })
     }
   }

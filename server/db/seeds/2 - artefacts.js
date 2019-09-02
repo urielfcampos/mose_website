@@ -7,7 +7,7 @@ exports.seed = function(knex) {
       return knex('artefacts').insert([
         {
           id: 0,
-          name: 'exampleArtefact',
+          artefact_name: 'exampleArtefact',
           model: 'exampleModel',
           wayOfUse: 'exampleWayOfUse'
         }
