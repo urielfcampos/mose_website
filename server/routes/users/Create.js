@@ -50,14 +50,8 @@ async function validateRequest(req) {
       return 400
     }
   }
-  const email = await User.getUsersByEmail(req.email)
-  for (const property in email) {
-    // eslint-disable-next-line no-console
-    console.log(property)
-  }
   const duplicateEmail = !!(await User.getUsersByEmail(req.email).length)
-  // eslint-disable-next-line no-console
-  console.log('duplicateEmail', email)
+
   if (duplicateEmail) {
     return 422
   }

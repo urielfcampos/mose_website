@@ -5,6 +5,7 @@ exports.up = function(knex) {
     table.string('summary')
     table.string('local')
     table.time('time')
+    table.integer('author').unsigned()
   })
 }
 

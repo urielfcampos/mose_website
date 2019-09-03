@@ -7,6 +7,7 @@ const auth = require('./routes/auth')
 const users = require('./routes/users')
 const examples = require('./routes/examples')
 const news = require('./routes/news')
+const events = require('./routes/events')
 const config = require('./config')
 const frontend = require('./routes/frontend')
 const router = new Router()
@@ -44,6 +45,13 @@ api.get('/news', bodyJson, news.List)
 api.post('/news', bodyJson, news.Create)
 api.put('/news/:id', bodyJson, news.Update)
 api.delete('/news/:id', bodyJson, news.Delete)
+
+// Event routes
+api.get('/events', bodyJson, events.List)
+api.get('/events/:id', bodyJson, events.Show)
+api.post('/events', bodyJson, events.Create)
+api.put('/events/:id', bodyJson, events.Update)
+api.del('/events/:id', bodyJson, events.Delete)
 
 // Not Found Routes
 api.all('/*', (ctx) => {

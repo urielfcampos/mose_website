@@ -40,6 +40,17 @@
             </nuxt-link>
           </li>
         </ul>
+        <p class="menu-label">
+          <b-icon icon="calendar" />
+          Eventos
+        </p>
+        <ul class="menu-list">
+          <li v-for="(item, key) of itemsEvents" :key="key">
+            <nuxt-link :to="item.to" exact-active-class="is-active">
+              {{ item.title }}
+            </nuxt-link>
+          </li>
+        </ul>
         <ul class="menu-list">
           <li>
             <a @click="logout"> <b-icon icon="logout" /> Sair </a>
@@ -88,6 +99,16 @@ export default {
         {
           title: 'Visualizar',
           to: { name: 'noticias-visualizar' }
+        }
+      ],
+      itemsEvents: [
+        {
+          title: 'Cadastrar',
+          to: { name: 'eventos-cadastrar' }
+        },
+        {
+          title: 'Visualizar',
+          to: { name: 'eventos-visualizar' }
         }
       ]
     }

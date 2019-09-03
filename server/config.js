@@ -18,7 +18,7 @@ const {
   PORT = '3000',
   JWT_SECRET = 'my-secret',
   API_PAGE_SIZE = 10,
-  DATABASE = 'sqlite',
+  DATABASE = 'postgres',
   API_URL_BROWSER = '/api'
 } = process.env
 
