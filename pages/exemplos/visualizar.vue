@@ -47,10 +47,10 @@ export default {
     return {
       examples: [],
       columns: [
-        { field: 'author.fullName', label: 'Autor' },
-        { field: 'reason', label: 'Finalidade' },
-        { field: 'objective', label: 'Objetivo de Competência' },
-        { field: 'fieldOfWork', label: 'Área de atuação' }
+        { field: 'fullName', label: 'Autor' },
+        { field: 'indicator_name', label: 'Indicador' },
+        { field: 'artefact_name', label: 'Artefato' },
+        { field: 'objective', label: 'Objetivo de Competência' }
       ],
       editExampleActivate: false,
       selectedExample: {},

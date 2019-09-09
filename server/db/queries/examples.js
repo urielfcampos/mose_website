@@ -4,58 +4,60 @@ async function addExample(example) {
   const artefactId = await knex('artefacts')
     .returning('id')
     .insert(example.artefact)
-  const statisticsId = await knex('statistic')
+  const indicatorId = await knex('indicator')
     .returning('id')
-    .insert(example.statistics)
-  const { reason, objective, fieldOfWork, author } = example
+    .insert(example.indicators)
+  const { objective, fieldOfWork, author } = example
   return knex('example').insert({
-    reason,
     objective,
     fieldOfWork,
     author,
     artefact_id: artefactId[0],
-    statistics_id: statisticsId[0]
+    indicator_id: indicatorId[0]
   })
 }
-async function getExampleById(id) {
-  const example = await knex('example')
-    .select('*')
-    .where('id', id)
-  const artefact = await knex('artefacts')
-    .select()
-    .where('id', example[0].artefact_id)
-  const statistic = await knex('statistic')
-    .select()
-    .where('id', example[0].statistics_id)
-  const assembledExample = { example, artefact, statistic }
-  return assembledExample
+async function updateExample(example) {
+  await knex('artefacts')
+    .update(example.artefact)
+    .where('id', example.artefact_id)
+  await knex('indicator')
+    .update(example.indicator)
+    .where('id', example.indicator_id)
+  return knex('example')
+    .update({
+      objective: example.objective,
+      fieldOfWork: example.fieldOfWork
+    })
+    .then((result) => {
+      return result
+    })
 }
-async function getExamples() {
-  const examples = await knex('example').select()
-  const authorsIds = []
-  for (const example in examples) {
-    const author = examples[example].author
-    if (author !== null) {
-      authorsIds.push(author)
-    } else {
-      examples[example].author = { fullName: 'Não possui Autor' }
-    }
-  }
-  const authors = await knex('users')
-    .select(['fullName', 'id'])
-    .whereIn('id', authorsIds)
-  for (const example in examples) {
-    const author = examples[example].author
-    for (let i = 0; i <= authors.length; i++) {
-      if (authors[i] !== undefined) {
-        if (authors[i].id === author) {
-          examples[example].author = authors[i]
-        } else {
-          examples[example].author = { fullName: 'Não possui Autor' }
-        }
-      }
-    }
-  }
-  return examples
+function getExampleById(id) {
+  return knex('example')
+    .join('artefacts', 'artefacts.id', 'example.artefact_id')
+    .join('indicator', 'indicator.id', 'example.indicator_id')
+    .select()
+    .where('example.id', id)
+    .then((result) => {
+      return result
+    })
 }
-module.exports = { addExample, getExampleById, getExamples }
+
+function getExamples() {
+  return knex('example')
+    .join('artefacts', 'artefacts.id', 'example.artefact_id')
+    .join('indicator', 'indicator.id', 'example.indicator_id')
+    .join('users', 'users.id', 'example.author')
+    .select(
+      'example.id',
+      'indicator.indicator_name',
+      'artefacts.artefact_name',
+      'users.fullName',
+      'example.fieldOfWork',
+      'example.objective'
+    )
+    .then((result) => {
+      return result
+    })
+}
+module.exports = { addExample, getExampleById, getExamples, updateExample }

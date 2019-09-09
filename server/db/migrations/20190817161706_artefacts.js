@@ -4,6 +4,7 @@ exports.up = function(knex) {
     table.string('artefact_name')
     table.string('model')
     table.string('wayOfUse')
+    table.string('artefact_reason')
   })
 }
 

@@ -8,6 +8,7 @@ exports.seed = function(knex) {
         {
           id: 0,
           artefact_name: 'exampleArtefact',
+          artefact_reason: ' reason',
           model: 'exampleModel',
           wayOfUse: 'exampleWayOfUse'
         }

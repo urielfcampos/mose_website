@@ -5,21 +5,25 @@
       <h1 class="text title has-text-centered">Cadastro de Exemplo</h1>
       <form @submit.prevent="validateForm">
         <section class="section">
-          <b-field label="Finalidade">
-            <b-input
-              v-model="example.reason"
-              maxlength="200"
-              type="textarea"
-              required
-            ></b-input>
-          </b-field>
           <b-field label="Objetivo de competência">
-            <b-input
+            <b-select
               v-model="example.objective"
-              maxlength="200"
-              type="textarea"
-              required
-            ></b-input>
+              placeholder="Selecione um objetivo de competência"
+            >
+              <optgroup
+                v-for="(objectives, objectiveName) in objectiveCompetencies"
+                :key="objectiveName"
+                :label="getObjectiveName(objectiveName)"
+              >
+                <option
+                  v-for="(objective, index) in objectives"
+                  :key="index"
+                  :value="objective"
+                >
+                  {{ objective }}
+                </option>
+              </optgroup>
+            </b-select>
           </b-field>
           <b-field label="Área de Atuação">
             <b-autocomplete
@@ -39,7 +43,15 @@
                 required
               ></b-input>
             </b-field>
-            <b-field label="Modelo">
+            <b-field label="Finalidade">
+              <b-input
+                v-model="example.artefact.artefact_reason"
+                maxlength="200"
+                type="textarea"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Informações constantes no artefato">
               <b-input
                 v-model="example.artefact.model"
                 maxlength="200"
@@ -60,13 +72,21 @@
           <b-tab-item label="Indicadores">
             <b-field label="Nome">
               <b-input
-                v-model="example.statistics.indicator_name"
+                v-model="example.indicators.indicator_name"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Finalidade">
+              <b-input
+                v-model="example.indicators.indicator_reason"
+                maxlength="200"
+                type="textarea"
                 required
               ></b-input>
             </b-field>
             <b-field label="Procedimento de coleta">
               <b-input
-                v-model="example.statistics.wayOfCollection"
+                v-model="example.indicators.wayOfCollection"
                 maxlength="200"
                 type="textarea"
                 required
@@ -74,7 +94,7 @@
             </b-field>
             <b-field label="Procedimento de análise">
               <b-input
-                v-model="example.statistics.wayOfAnalysis"
+                v-model="example.indicators.wayOfAnalysis"
                 maxlength="200"
                 type="textarea"
                 required
@@ -94,6 +114,7 @@
 </template>
 
 <script>
+import { objectiveCompetency } from '~/shared/enums'
 import { errorHandler } from '~/front/mixins/errorHandler'
 import { notificationHandler } from '~/front/mixins/notificationHandler'
 export default {
@@ -101,20 +122,26 @@ export default {
   data() {
     return {
       example: {
-        reason: '',
         objective: '',
         fieldOfWork: '',
-        artefact: { artefact_name: '', model: '', wayOfUse: '' },
-        statistics: {
+        artefact: {
+          artefact_name: '',
+          model: '',
+          wayOfUse: '',
+          artefact_reason: ''
+        },
+        indicators: {
           indicator_name: '',
           wayOfCollection: '',
-          wayOfAnalysis: ''
+          wayOfAnalysis: '',
+          indicator_reason: ''
         },
         author: 0
       },
       fields: [],
       selected: null,
-      activeTab: 0
+      activeTab: 0,
+      objectiveCompetencies: objectiveCompetency
     }
   },
   computed: {
@@ -143,8 +170,8 @@ export default {
           return
         }
       }
-      for (const exampleProperty in this.example.statistics) {
-        if (this.example.statistics[exampleProperty] === '') {
+      for (const exampleProperty in this.example.indicators) {
+        if (this.example.indicators[exampleProperty] === '') {
           this.$toast.open({
             message: 'Por favor preencha todo o formulário',
             type: 'is-danger'
@@ -187,6 +214,29 @@ export default {
         .catch((err) => {
           this.openDangerToast(this.errorMessage(err.response.data.code))
         })
+    },
+    getObjectiveName(objective) {
+      let name = ''
+      switch (objective) {
+        case 'talentoHumano':
+          name = 'Talento Humano'
+          break
+        case 'gestaoQualidade':
+          name = 'Gestão e Qualidade'
+          break
+        case 'clienteMercado':
+          name = 'Cliente e Mercado'
+          break
+        case 'inovacao':
+          name = 'Inovação'
+          break
+        case 'sociedadeMeioAmbiente':
+          name = 'Sociedade e Meio Ambiente'
+          break
+        default:
+          break
+      }
+      return name
     }
   }
 }

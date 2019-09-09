@@ -7,11 +7,10 @@ exports.seed = function(knex) {
       return knex('example').insert([
         {
           id: 0,
-          reason: 'ExampleReason',
           objective: 'objective',
           fieldOfWork: 'fieldofwork',
           artefact_id: 0,
-          statistics_id: 0,
+          indicator_id: 0,
           author: 1
         }
       ])
