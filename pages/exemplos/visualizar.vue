@@ -25,6 +25,105 @@
     </b-table>
     <b-modal :active.sync="editExampleActivate">
       <div class="container box">
+        <section class="section">
+          <b-field label="Objetivo de competência">
+            <b-select
+              v-model="selectedExample.objective"
+              placeholder="Selecione um objetivo de competência"
+            >
+              <optgroup
+                v-for="(objectives, objectiveName) in objectiveCompetencies"
+                :key="objectiveName"
+                :label="getObjectiveName(objectiveName)"
+              >
+                <option
+                  v-for="(objective, index) in objectives"
+                  :key="index"
+                  :value="objective"
+                >
+                  {{ objective }}
+                </option>
+              </optgroup>
+            </b-select>
+          </b-field>
+          <b-field label="Área de Atuação">
+            <b-autocomplete
+              v-model="selectedExample.fieldOfWork"
+              :data="autoFieldOfWork"
+              icon="magnify"
+              required
+              @select="(option) => (selected = option)"
+            ></b-autocomplete>
+          </b-field>
+        </section>
+        <b-tabs v-model="activeTab" position="is-centered">
+          <b-tab-item label="Artefato">
+            <b-field label="Nome">
+              <b-input
+                v-model="selectedExample.artefact_name"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Finalidade">
+              <b-input
+                v-model="selectedExample.artefact_reason"
+                maxlength="200"
+                type="textarea"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Informações constantes no artefato">
+              <b-input
+                v-model="selectedExample.model"
+                maxlength="200"
+                type="textarea"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Como utilizar">
+              <b-input
+                v-model="selectedExample.wayOfUse"
+                maxlength="200"
+                type="textarea"
+                required
+              >
+              </b-input>
+            </b-field>
+          </b-tab-item>
+          <b-tab-item label="Indicadores">
+            <b-field label="Nome">
+              <b-input
+                v-model="selectedExample.indicator_name"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Finalidade">
+              <b-input
+                v-model="selectedExample.indicator_reason"
+                maxlength="200"
+                type="textarea"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Procedimento de coleta">
+              <b-input
+                v-model="selectedExample.wayOfCollection"
+                maxlength="200"
+                type="textarea"
+                required
+              ></b-input>
+            </b-field>
+            <b-field label="Procedimento de análise">
+              <b-input
+                v-model="selectedExample.wayOfAnalysis"
+                maxlength="200"
+                type="textarea"
+                required
+              >
+              </b-input>
+            </b-field>
+          </b-tab-item>
+        </b-tabs>
         <br />
         <b-button
           type="submit"
@@ -41,8 +140,10 @@
 <script>
 import { errorHandler } from '~/front/mixins/errorHandler'
 import { notificationHandler } from '~/front/mixins/notificationHandler'
+import { objectiveCompetency } from '~/shared/enums'
+import { enumMap } from '~/front/mixins/enum'
 export default {
-  mixins: [errorHandler, notificationHandler],
+  mixins: [errorHandler, notificationHandler, enumMap],
   data() {
     return {
       examples: [],
@@ -55,7 +156,8 @@ export default {
       editExampleActivate: false,
       selectedExample: {},
       activeTab: 0,
-      fields: []
+      fields: [],
+      objectiveCompetencies: objectiveCompetency
     }
   },
   computed: {
@@ -81,7 +183,7 @@ export default {
     },
     getExampleById(id) {
       this.$axios.get(`/api/examples/${id}`).then((res) => {
-        this.selectedExample = Object.assign({}, res.data)
+        this.selectedExample = res.data[0]
       })
     },
     editExamples(example) {
@@ -92,17 +194,23 @@ export default {
       this.$axios
         .put(`/api/examples/${id}`, this.selectedExample)
         .then((res) => {
-          this.openSuccessToast('Usuário editado com sucesso')
-          this.getUsers()
+          this.openSuccessToast('Exemmplo editado com sucesso')
+          this.getExamples()
         })
         .catch((err) => {
           this.openDangerToast(this.errorMessage(err.response.data.code))
         })
     },
     deleteExample(id) {
-      this.$axios.delete(`/api/examples/${id}`).then((res) => {
-        this.$toast.open({ message: '' })
-      })
+      this.$axios
+        .delete(`/api/examples/${id}`)
+        .then((res) => {
+          this.openSuccessToast('Exemmplo deletada com sucesso')
+          this.getExamples()
+        })
+        .catch((err) => {
+          this.openDangerToast(this.errorMessage(err.response.data.code))
+        })
     },
     getFields() {
       this.$axios

@@ -104,10 +104,15 @@ export default {
         })
     },
     deleteEvents(id) {
-      this.$axios.delete(`/api/Events/${id}`).then((res) => {
-        this.$toast.open({ message: '' })
-        this.getEvents()
-      })
+      this.$axios
+        .delete(`/api/Events/${id}`)
+        .then((res) => {
+          this.openSuccessToast('Notícia deletada com sucesso')
+          this.getEvents()
+        })
+        .catch((err) => {
+          this.openDangerToast(this.errorMessage(err.response.data.code))
+        })
     }
   }
 }

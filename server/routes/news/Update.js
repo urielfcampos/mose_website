@@ -12,6 +12,7 @@ module.exports = async function updateNews(ctx) {
   if (news === null) {
     ctx.status = 404
     ctx.body = { code: errors.NOT_FOUND }
+    return
   }
   ctx.body = await News.updateNews(payload)
 }

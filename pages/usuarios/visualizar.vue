@@ -122,9 +122,15 @@ export default {
         })
     },
     deactivateUser(id) {
-      this.$axios.delete(`/api/users/${id}`).then((res) => {
-        this.$toast.open({ message: '' })
-      })
+      this.$axios
+        .delete(`/api/users/${id}`)
+        .then((res) => {
+          this.openSuccessToast('Usuário excluido com sucesso')
+          this.getUsers()
+        })
+        .catch((err) => {
+          this.openDangerToast(this.errorMessage(err.response.data.code))
+        })
     }
   }
 }

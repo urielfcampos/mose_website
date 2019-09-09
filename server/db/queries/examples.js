@@ -17,20 +17,35 @@ async function addExample(example) {
   })
 }
 async function updateExample(example) {
-  await knex('artefacts')
-    .update(example.artefact)
-    .where('id', example.artefact_id)
-  await knex('indicator')
-    .update(example.indicator)
-    .where('id', example.indicator_id)
-  return knex('example')
-    .update({
-      objective: example.objective,
-      fieldOfWork: example.fieldOfWork
-    })
-    .then((result) => {
-      return result
-    })
+  try {
+    await knex('artefacts')
+      .update({
+        artefact_name: example.artefact_name,
+        artefact_reason: example.artefact_reason,
+        model: example.model,
+        wayOfUse: example.wayOfUse
+      })
+      .where('id', example.artefact_id)
+    await knex('indicator')
+      .update({
+        indicator_name: example.indicator_name,
+        indicator_reason: example.indicator_reason,
+        wayOfAnalysis: example.wayOfAnalysis,
+        wayOfCollection: example.wayOfCollection
+      })
+      .where('id', example.indicator_id)
+    return knex('example')
+      .update({
+        objective: example.objective,
+        fieldOfWork: example.fieldOfWork
+      })
+      .where('id', example.id)
+      .then((result) => {
+        return result
+      })
+  } catch (error) {
+    throw new Error(error)
+  }
 }
 function getExampleById(id) {
   return knex('example')
@@ -60,4 +75,19 @@ function getExamples() {
       return result
     })
 }
-module.exports = { addExample, getExampleById, getExamples, updateExample }
+function deleteExample(id) {
+  return knex('example')
+    .del()
+    .where('id', id)
+    .then((result) => {
+      return result
+    })
+}
+
+module.exports = {
+  addExample,
+  getExampleById,
+  getExamples,
+  updateExample,
+  deleteExample
+}

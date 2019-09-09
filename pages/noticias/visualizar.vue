@@ -96,10 +96,15 @@ export default {
         })
     },
     deleteNews(id) {
-      this.$axios.delete(`/api/news/${id}`).then((res) => {
-        this.$toast.open({ message: '' })
-        this.getNews()
-      })
+      this.$axios
+        .delete(`/api/news/${id}`)
+        .then((res) => {
+          this.openSuccessToast('Notícia deletada com sucesso')
+          this.getNews()
+        })
+        .catch((err) => {
+          this.openDangerToast(this.errorMessage(err.response.data.code))
+        })
     }
   }
 }

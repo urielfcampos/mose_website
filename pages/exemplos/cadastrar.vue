@@ -117,8 +117,9 @@
 import { objectiveCompetency } from '~/shared/enums'
 import { errorHandler } from '~/front/mixins/errorHandler'
 import { notificationHandler } from '~/front/mixins/notificationHandler'
+import { enumMap } from '~/front/mixins/enum'
 export default {
-  mixins: [errorHandler, notificationHandler],
+  mixins: [errorHandler, notificationHandler, enumMap],
   data() {
     return {
       example: {
@@ -214,29 +215,6 @@ export default {
         .catch((err) => {
           this.openDangerToast(this.errorMessage(err.response.data.code))
         })
-    },
-    getObjectiveName(objective) {
-      let name = ''
-      switch (objective) {
-        case 'talentoHumano':
-          name = 'Talento Humano'
-          break
-        case 'gestaoQualidade':
-          name = 'Gestão e Qualidade'
-          break
-        case 'clienteMercado':
-          name = 'Cliente e Mercado'
-          break
-        case 'inovacao':
-          name = 'Inovação'
-          break
-        case 'sociedadeMeioAmbiente':
-          name = 'Sociedade e Meio Ambiente'
-          break
-        default:
-          break
-      }
-      return name
     }
   }
 }
