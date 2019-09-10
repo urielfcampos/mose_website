@@ -17,35 +17,31 @@ async function addExample(example) {
   })
 }
 async function updateExample(example) {
-  try {
-    await knex('artefacts')
-      .update({
-        artefact_name: example.artefact_name,
-        artefact_reason: example.artefact_reason,
-        model: example.model,
-        wayOfUse: example.wayOfUse
-      })
-      .where('id', example.artefact_id)
-    await knex('indicator')
-      .update({
-        indicator_name: example.indicator_name,
-        indicator_reason: example.indicator_reason,
-        wayOfAnalysis: example.wayOfAnalysis,
-        wayOfCollection: example.wayOfCollection
-      })
-      .where('id', example.indicator_id)
-    return knex('example')
-      .update({
-        objective: example.objective,
-        fieldOfWork: example.fieldOfWork
-      })
-      .where('id', example.id)
-      .then((result) => {
-        return result
-      })
-  } catch (error) {
-    throw new Error(error)
-  }
+  await knex('artefacts')
+    .update({
+      artefact_name: example.artefact_name,
+      artefact_reason: example.artefact_reason,
+      model: example.model,
+      wayOfUse: example.wayOfUse
+    })
+    .where('id', example.artefact_id)
+  await knex('indicator')
+    .update({
+      indicator_name: example.indicator_name,
+      indicator_reason: example.indicator_reason,
+      wayOfAnalysis: example.wayOfAnalysis,
+      wayOfCollection: example.wayOfCollection
+    })
+    .where('id', example.indicator_id)
+  return knex('example')
+    .update({
+      objective: example.objective,
+      fieldOfWork: example.fieldOfWork
+    })
+    .where('id', example.id)
+    .then((result) => {
+      return result
+    })
 }
 function getExampleById(id) {
   return knex('example')

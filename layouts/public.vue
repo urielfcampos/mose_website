@@ -45,6 +45,11 @@
             </div>
           </div>
         </div>
+        <div class="navbar-end">
+          <nuxt-link class="navbar-item has-text-danger" :to="{ path: '/' }">
+            Área restrita
+          </nuxt-link>
+        </div>
       </div>
     </nav>
     <nuxt />

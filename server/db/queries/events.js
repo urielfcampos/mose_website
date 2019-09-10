@@ -2,17 +2,14 @@ const knex = require('../connection')
 
 function addEvent(event, userId) {
   const time = new Date(event.time)
-
-  // eslint-disable-next-line no-console
-  console.log(time.toTimeString())
-
   return knex('events')
     .insert({
       name: event.name,
       summary: event.summary,
       local: event.local,
       time: knex.raw('to_timestamp(?)', time.getTime() / 1000),
-      author: userId
+      author: userId,
+      date: event.date
     })
     .then((result) => {
       return result
@@ -27,7 +24,8 @@ function getEvents() {
       'events.summary',
       'events.local',
       'events.time',
-      'users.fullName'
+      'users.fullName',
+      'events.date'
     )
     .then((result) => {
       return result

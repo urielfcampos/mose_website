@@ -72,7 +72,8 @@ export default {
       columns: [
         { field: 'name', label: 'Nome do Evento' },
         { field: 'local', label: 'Local' },
-        { field: 'fullName', label: 'Autor' }
+        { field: 'fullName', label: 'Autor' },
+        { field: 'date', label: 'Data' }
       ],
       editEventActivate: false,
       selectedEvent: {}

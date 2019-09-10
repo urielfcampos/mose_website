@@ -18,11 +18,14 @@
         <b-field label="Local do evento.">
           <b-input v-model="event.local" required></b-input>
         </b-field>
+        <b-field label="Data">
+          <b-datepicker v-model="event.date" icon="calendar-today">
+          </b-datepicker>
+        </b-field>
         <b-field label="Horário">
           <b-timepicker v-model="event.time" icon="clock" hour-format="24">
           </b-timepicker>
         </b-field>
-
         <br />
         <b-button type="submit" class="btn is-info" @click="validateForm">
           Cadastrar
@@ -43,7 +46,8 @@ export default {
         name: '',
         summary: '',
         local: '',
-        time: ''
+        time: '',
+        date: ''
       }
     }
   },
