@@ -38,14 +38,11 @@
         <b-tabs v-model="activeTab" position="is-centered">
           <b-tab-item label="Artefato">
             <b-field label="Nome">
-              <b-input
-                v-model="example.artefact.artefact_name"
-                required
-              ></b-input>
+              <b-input v-model="artefact.artefact_name" required></b-input>
             </b-field>
             <b-field label="Finalidade">
               <b-input
-                v-model="example.artefact.artefact_reason"
+                v-model="artefact.artefact_reason"
                 maxlength="200"
                 type="textarea"
                 required
@@ -53,7 +50,7 @@
             </b-field>
             <b-field label="Informações constantes no artefato">
               <b-input
-                v-model="example.artefact.model"
+                v-model="artefact.model"
                 maxlength="200"
                 type="textarea"
                 required
@@ -61,7 +58,7 @@
             </b-field>
             <b-field label="Como utilizar">
               <b-input
-                v-model="example.artefact.wayOfUse"
+                v-model="artefact.wayOfUse"
                 maxlength="200"
                 type="textarea"
                 required
@@ -71,14 +68,11 @@
           </b-tab-item>
           <b-tab-item label="Indicadores">
             <b-field label="Nome">
-              <b-input
-                v-model="example.indicators.indicator_name"
-                required
-              ></b-input>
+              <b-input v-model="indicator.indicator_name" required></b-input>
             </b-field>
             <b-field label="Finalidade">
               <b-input
-                v-model="example.indicators.indicator_reason"
+                v-model="indicator.indicator_reason"
                 maxlength="200"
                 type="textarea"
                 required
@@ -86,7 +80,7 @@
             </b-field>
             <b-field label="Procedimento de coleta">
               <b-input
-                v-model="example.indicators.wayOfCollection"
+                v-model="indicator.wayOfCollection"
                 maxlength="200"
                 type="textarea"
                 required
@@ -94,7 +88,7 @@
             </b-field>
             <b-field label="Procedimento de análise">
               <b-input
-                v-model="example.indicators.wayOfAnalysis"
+                v-model="indicator.wayOfAnalysis"
                 maxlength="200"
                 type="textarea"
                 required
@@ -125,24 +119,26 @@ export default {
       example: {
         objective: '',
         fieldOfWork: '',
-        artefact: {
-          artefact_name: '',
-          model: '',
-          wayOfUse: '',
-          artefact_reason: ''
-        },
-        indicators: {
-          indicator_name: '',
-          wayOfCollection: '',
-          wayOfAnalysis: '',
-          indicator_reason: ''
-        },
+        artefacts: [],
+        indicators: [],
         author: 0
       },
       fields: [],
       selected: null,
       activeTab: 0,
-      objectiveCompetencies: objectiveCompetency
+      objectiveCompetencies: objectiveCompetency,
+      artefact: {
+        artefact_name: '',
+        model: '',
+        wayOfUse: '',
+        artefact_reason: ''
+      },
+      indicator: {
+        indicator_name: '',
+        wayOfCollection: '',
+        wayOfAnalysis: '',
+        indicator_reason: ''
+      }
     }
   },
   computed: {
@@ -171,8 +167,8 @@ export default {
           return
         }
       }
-      for (const exampleProperty in this.example.indicators) {
-        if (this.example.indicators[exampleProperty] === '') {
+      for (const exampleProperty in this.indicator) {
+        if (this.indicator[exampleProperty] === '') {
           this.$toast.open({
             message: 'Por favor preencha todo o formulário',
             type: 'is-danger'
@@ -180,8 +176,8 @@ export default {
           return
         }
       }
-      for (const exampleProperty in this.example.artefact) {
-        if (this.example.artefact[exampleProperty] === '') {
+      for (const exampleProperty in this.artefact) {
+        if (this.artefact[exampleProperty] === '') {
           this.$toast.open({
             message: 'Por favor preencha todo o formulário',
             type: 'is-danger'
@@ -193,6 +189,8 @@ export default {
     },
     sendForm() {
       this.example.author = this.$store.state.auth.user.id
+      this.example.artefacts = this.example.artefacts.concat(this.artefact)
+      this.example.indicators = this.example.indicators.concat(this.indicator)
       this.$axios
         .post('/api/examples', this.example)
         .then((res) => {

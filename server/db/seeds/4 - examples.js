@@ -9,8 +9,6 @@ exports.seed = function(knex) {
           id: 0,
           objective: 'objective',
           fieldOfWork: 'fieldofwork',
-          artefact_id: 0,
-          indicator_id: 0,
           author: 1
         }
       ])

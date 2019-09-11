@@ -1,20 +1,65 @@
 const knex = require('../connection')
 
 async function addExample(example) {
-  const artefactId = await knex('artefacts')
-    .returning('id')
-    .insert(example.artefact)
-  const indicatorId = await knex('indicator')
-    .returning('id')
-    .insert(example.indicators)
+  const artefactIds = []
+  const indicatorIds = []
+  for (const artefact in example.artefacts) {
+    try {
+      const artefactId = await knex('artefacts')
+        .returning('id')
+        .insert(example.artefacts[artefact])
+      artefactIds.push(artefactId)
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+  for (const indicator in example.indicators) {
+    try {
+      const indicatorId = await knex('indicator')
+        .returning('id')
+        .insert(example.indicators[indicator])
+      indicatorIds.push(indicatorId)
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
   const { objective, fieldOfWork, author } = example
-  return knex('example').insert({
-    objective,
-    fieldOfWork,
-    author,
-    artefact_id: artefactId[0],
-    indicator_id: indicatorId[0]
-  })
+  let exampleId
+  try {
+    exampleId = await knex('example')
+      .returning('id')
+      .insert({
+        objective,
+        fieldOfWork,
+        author
+      })
+  } catch (error) {
+    throw new Error(error)
+  }
+
+  // eslint-disable-next-line no-console
+  console.log(exampleId, artefactIds, indicatorIds)
+  for (const artefactId in artefactIds) {
+    try {
+      await knex('example-artefact').insert({
+        example_id: exampleId,
+        artefact_id: artefactId
+      })
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
+
+  for (const indicatorId in indicatorIds) {
+    try {
+      await knex('example-indicator').insert({
+        example_id: exampleId,
+        indicator_id: indicatorId
+      })
+    } catch (error) {
+      throw new Error(error)
+    }
+  }
 }
 async function updateExample(example) {
   await knex('artefacts')
