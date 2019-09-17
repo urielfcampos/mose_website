@@ -149,8 +149,8 @@ export default {
       examples: [],
       columns: [
         { field: 'fullName', label: 'Autor' },
-        { field: 'indicator_name', label: 'Indicador' },
-        { field: 'artefact_name', label: 'Artefato' },
+        { field: 'indicator_count', label: 'Indicadores' },
+        { field: 'artefact_count', label: 'Artefatos' },
         { field: 'objective', label: 'Objetivo de Competência' }
       ],
       editExampleActivate: false,

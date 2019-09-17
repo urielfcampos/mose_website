@@ -65,6 +65,42 @@
               >
               </b-input>
             </b-field>
+            <b-button type="is-primary" @click="addArtefact">
+              Adicionar
+            </b-button>
+            <br />
+            <br />
+            <div
+              v-for="(registeredArtefact, index) in example.artefacts"
+              :key="index"
+              class="box"
+            >
+              <b-field grouped>
+                <p class="control title is-3">
+                  {{ registeredArtefact.artefact_name }}
+                </p>
+                <p class="control ">
+                  <b-button
+                    class="has-text-right "
+                    type="is-primary"
+                    icon-left="pencil"
+                    @click="editArtefact(index)"
+                  >
+                    {{ editingArtefact ? 'Finalizar edição' : 'Editar' }}
+                  </b-button>
+                </p>
+                <p class="control">
+                  <b-button
+                    class="has-text-right"
+                    type="is-danger"
+                    icon-left="delete"
+                    @click="deleteArtefact(index)"
+                  >
+                    Excluir
+                  </b-button>
+                </p>
+              </b-field>
+            </div>
           </b-tab-item>
           <b-tab-item label="Indicadores">
             <b-field label="Nome">
@@ -95,6 +131,38 @@
               >
               </b-input>
             </b-field>
+            <b-button type="is-primary" @click="addIndicator">
+              Adicionar
+            </b-button>
+            <br />
+            <br />
+            <div
+              v-for="(registeredIndicator, index) in example.indicators"
+              :key="index"
+              class="box"
+            >
+              <b-field grouped>
+                <p class="control title is-3">
+                  {{ registeredIndicator.indicator_name }}
+                </p>
+                <p class="control ">
+                  <b-button
+                    class="has-text-right "
+                    type="is-primary"
+                    icon-left="pencil"
+                    >Editar</b-button
+                  >
+                </p>
+                <p class="control">
+                  <b-button
+                    class="has-text-right"
+                    type="is-danger"
+                    icon-left="delete"
+                    >Excluir</b-button
+                  >
+                </p>
+              </b-field>
+            </div>
           </b-tab-item>
         </b-tabs>
 
@@ -138,7 +206,9 @@ export default {
         wayOfCollection: '',
         wayOfAnalysis: '',
         indicator_reason: ''
-      }
+      },
+      editingArtefact: false,
+      editingIndicator: false
     }
   },
   computed: {
@@ -161,41 +231,40 @@ export default {
       for (const exampleProperty in this.example) {
         if (this.example[exampleProperty] === '') {
           this.$toast.open({
-            message: 'Por favor preencha todo o formulário',
+            message: 'Por favor preencha todo o formulário sobre Exemplo',
             type: 'is-danger'
           })
           return
         }
       }
-      for (const exampleProperty in this.indicator) {
-        if (this.indicator[exampleProperty] === '') {
-          this.$toast.open({
-            message: 'Por favor preencha todo o formulário',
-            type: 'is-danger'
-          })
-          return
-        }
+      if (
+        this.example.indicators.length === 0 &&
+        this.example.artefacts.length === 0
+      ) {
+        this.openDangerToast(
+          'Por favor cadastre pelo menos um indicador e um artefato'
+        )
+        return
       }
-      for (const exampleProperty in this.artefact) {
-        if (this.artefact[exampleProperty] === '') {
-          this.$toast.open({
-            message: 'Por favor preencha todo o formulário',
-            type: 'is-danger'
-          })
-          return
-        }
+      if (this.example.indicators.length === 0) {
+        this.openDangerToast('Por favor cadastre pelo menos um indicador')
+        return
+      }
+      if (this.example.artefacts.length === 0) {
+        this.openDangerToast('Por favor cadastre pelo menos um Exemplo')
+        return
       }
       this.sendForm()
     },
     sendForm() {
       this.example.author = this.$store.state.auth.user.id
-      this.example.artefacts = this.example.artefacts.concat(this.artefact)
-      this.example.indicators = this.example.indicators.concat(this.indicator)
       this.$axios
         .post('/api/examples', this.example)
         .then((res) => {
           this.openSuccessToast('Exemplo cadastrado com sucesso')
           this.getFields()
+
+          this.clearFields()
         })
         .catch((err) => {
           this.openDangerToast(this.errorMessage(err.response.data.code))
@@ -213,6 +282,76 @@ export default {
         .catch((err) => {
           this.openDangerToast(this.errorMessage(err.response.data.code))
         })
+    },
+    addArtefact() {
+      for (const exampleProperty in this.artefact) {
+        if (this.artefact[exampleProperty] === '') {
+          this.$toast.open({
+            message: 'Por favor preencha todo o formulário de artefato',
+            type: 'is-danger'
+          })
+          return
+        }
+      }
+      this.example.artefacts.push(Object.assign({}, this.artefact))
+      Object.keys(this.artefact).forEach((element) => {
+        this.artefact[element] = ''
+      })
+    },
+    addIndicator() {
+      for (const exampleProperty in this.indicator) {
+        if (this.indicator[exampleProperty] === '') {
+          this.$toast.open({
+            message: 'Por favor preencha todo o formulário de Indicador',
+            type: 'is-danger'
+          })
+          return
+        }
+      }
+      this.example.indicators.push(Object.assign({}, this.indicator))
+      Object.keys(this.indicator).forEach((element) => {
+        this.indicator[element] = ''
+      })
+    },
+    editArtefact(index) {
+      this.artefact = this.example.artefacts[index]
+      if (this.editingArtefact === true) {
+        this.example.artefacts[index] = Object.assign({}, this.artefact)
+        this.editingArtefact = false
+        Object.keys(this.artefact).forEach((element) => {
+          this.artefact[element] = ''
+        })
+        return
+      }
+      this.editingArtefact = true
+    },
+    editIndicator(index) {
+      this.indicator = this.example.indicator[index]
+      if (this.editingIndicator === true) {
+        this.example.indicators[index] = Object.assign({}, this.indicator)
+        this.editingIndicator = false
+        Object.keys(this.indicator).forEach((element) => {
+          this.indicator[element] = ''
+        })
+        return
+      }
+      this.editingIndicator = true
+    },
+    deleteArtefact(index) {
+      this.example.artefacts.splice(index, 1)
+    },
+    clearFields() {
+      Object.keys(this.indicator).forEach((element) => {
+        this.indicator[element] = ''
+      })
+      Object.keys(this.artefact).forEach((element) => {
+        this.indicator[element] = ''
+      })
+      Object.keys(this.example).forEach((element) => {
+        if (element === 'artefacts' || element === 'indicators') {
+          this.example[element] = []
+        } else this.example[element] = ''
+      })
     }
   }
 }

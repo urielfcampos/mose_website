@@ -8,7 +8,7 @@ async function addExample(example) {
       const artefactId = await knex('artefacts')
         .returning('id')
         .insert(example.artefacts[artefact])
-      artefactIds.push(artefactId)
+      artefactIds.push(artefactId[0])
     } catch (error) {
       throw new Error(error)
     }
@@ -18,7 +18,7 @@ async function addExample(example) {
       const indicatorId = await knex('indicator')
         .returning('id')
         .insert(example.indicators[indicator])
-      indicatorIds.push(indicatorId)
+      indicatorIds.push(indicatorId[0])
     } catch (error) {
       throw new Error(error)
     }
@@ -36,12 +36,12 @@ async function addExample(example) {
   } catch (error) {
     throw new Error(error)
   }
+  // Tratar o objeto do knex...
+  exampleId = exampleId[0]
 
-  // eslint-disable-next-line no-console
-  console.log(exampleId, artefactIds, indicatorIds)
-  for (const artefactId in artefactIds) {
+  for (const artefactId of artefactIds) {
     try {
-      await knex('example-artefact').insert({
+      await knex('example_artefact').insert({
         example_id: exampleId,
         artefact_id: artefactId
       })
@@ -50,9 +50,9 @@ async function addExample(example) {
     }
   }
 
-  for (const indicatorId in indicatorIds) {
+  for (const indicatorId of indicatorIds) {
     try {
-      await knex('example-indicator').insert({
+      await knex('example_indicator').insert({
         example_id: exampleId,
         indicator_id: indicatorId
       })
@@ -99,22 +99,15 @@ function getExampleById(id) {
     })
 }
 
-function getExamples() {
-  return knex('example')
-    .join('artefacts', 'artefacts.id', 'example.artefact_id')
-    .join('indicator', 'indicator.id', 'example.indicator_id')
-    .join('users', 'users.id', 'example.author')
-    .select(
-      'example.id',
-      'indicator.indicator_name',
-      'artefacts.artefact_name',
-      'users.fullName',
-      'example.fieldOfWork',
-      'example.objective'
-    )
-    .then((result) => {
-      return result
-    })
+async function getExamples() {
+  const examples = await knex.raw(`SELECT e.id as example_id, e.objective, e.fieldOfWork,a.id as artefact_id,
+  a.artefact_name, a.model,a.wayOfUse, a.artefact_reason
+  FROM example as e
+  JOIN example_artefact as ea on e.id = ea.example_id
+  JOIN artefacts as a on ea.artefact_id = a.id
+  `)
+  // eslint-disable-next-line no-console
+  console.log(examples.rows)
 }
 function deleteExample(id) {
   return knex('example')

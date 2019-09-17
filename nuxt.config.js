@@ -1,3 +1,4 @@
+const errors = require('./shared/errors')
 module.exports = {
   mode: 'spa',
   /*
@@ -38,12 +39,18 @@ module.exports = {
     '@nuxtjs/axios',
     '@nuxtjs/eslint-module'
   ],
-
+  pageTransition: {
+    name: 'page',
+    mode: 'out-in'
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
   axios: {},
+  env: {
+    errors
+  },
   /*
    ** Build configuration
    */
