@@ -100,14 +100,20 @@ function getExampleById(id) {
 }
 
 async function getExamples() {
-  const examples = await knex.raw(`SELECT e.id as example_id, e.objective, e.fieldOfWork,a.id as artefact_id,
-  a.artefact_name, a.model,a.wayOfUse, a.artefact_reason
-  FROM example as e
-  JOIN example_artefact as ea on e.id = ea.example_id
-  JOIN artefacts as a on ea.artefact_id = a.id
-  `)
-  // eslint-disable-next-line no-console
-  console.log(examples.rows)
+  const examplesJoinArtefacts = await knex('example')
+    .select('*', 'example.id as exampleId')
+    .join('example_artefact', 'example.id', 'example_artefact.example_id')
+    .join('artefacts', 'example_artefact.artefact_id', 'artefacts.id')
+  const examplesJoinIndicator = await knex('example')
+    .select('*', 'example.id as exampleId')
+    .join('example_indicator', 'example.id', 'example_indicator.example_id')
+    .join('indicator', 'example_indicator.example_id', 'indicator.id')
+
+  const mergedExample = mergeExamples(
+    examplesJoinArtefacts,
+    examplesJoinIndicator
+  )
+  return mergedExample
 }
 function deleteExample(id) {
   return knex('example')
@@ -116,6 +122,77 @@ function deleteExample(id) {
     .then((result) => {
       return result
     })
+}
+
+function mergeExamples(artefacts, indicators) {
+  const artefactsList = {}
+  const indicatorList = {}
+  const exampleList = {}
+  for (const artefact of artefacts) {
+    const exampleKeys = Object.keys(exampleList)
+    const keys = Object.keys(artefactsList)
+    if (!exampleKeys.includes(String(artefact.exampleId))) {
+      exampleList[artefact.exampleId] = {
+        id: artefact.exampleId,
+        fieldOfWork: artefact.fieldOfWork,
+        objective: artefact.objective,
+        author: artefact.author,
+        indicators: [],
+        artefacts: []
+      }
+    }
+    if (!keys.includes(String(artefact.exampleId))) {
+      artefactsList[artefact.exampleId] = [
+        {
+          id: artefact.artefact_id,
+          artefact_name: artefact.artefact_name,
+          model: artefact.model,
+          wayOfUse: artefact.wayOfUse,
+          artefact_reason: artefact.artefact_reason
+        }
+      ]
+    } else {
+      artefactsList[artefact.exampleId].push({
+        id: artefact.artefact_id,
+        artefact_name: artefact.artefact_name,
+        model: artefact.model,
+        wayOfUse: artefact.wayOfUse,
+        artefact_reason: artefact.artefact_reason
+      })
+    }
+  }
+  for (const indicator of indicators) {
+    const keys = Object.keys(indicatorList)
+    if (!keys.includes(String(indicator.exampleId))) {
+      indicatorList[indicator.exampleId] = [
+        {
+          id: indicator.indicator_id,
+          indicator_name: indicator.indicator_name,
+          wayOfCollection: indicator.wayOfCollection,
+          wayOfAnalysis: indicator.wayOfAnalysis,
+          indicator_reason: indicator.indicator_reason
+        }
+      ]
+    } else {
+      indicatorList[indicator.exampleId].push({
+        id: indicator.indicator_id,
+        indicator_name: indicator.indicator_name,
+        wayOfCollection: indicator.wayOfCollection,
+        wayOfAnalysis: indicator.wayOfAnalysis,
+        indicator_reason: indicator.indicator_reason
+      })
+    }
+  }
+  const mergedExamples = []
+  for (const example in exampleList) {
+    mergedExamples.push({
+      ...exampleList[example],
+      indicators: [...indicatorList[example]],
+      artefacts: [...artefactsList[example]]
+    })
+  }
+
+  return mergedExamples
 }
 
 module.exports = {
