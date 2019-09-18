@@ -62,22 +62,28 @@ async function addExample(example) {
   }
 }
 async function updateExample(example) {
-  await knex('artefacts')
-    .update({
-      artefact_name: example.artefact_name,
-      artefact_reason: example.artefact_reason,
-      model: example.model,
-      wayOfUse: example.wayOfUse
-    })
-    .where('id', example.artefact_id)
-  await knex('indicator')
-    .update({
-      indicator_name: example.indicator_name,
-      indicator_reason: example.indicator_reason,
-      wayOfAnalysis: example.wayOfAnalysis,
-      wayOfCollection: example.wayOfCollection
-    })
-    .where('id', example.indicator_id)
+  for (const artefact of example.artefacts) {
+    // eslint-disable-next-line no-console
+    console.log(artefact)
+    await knex('artefacts')
+      .update({
+        artefact_name: artefact.artefact_name,
+        artefact_reason: artefact.artefact_reason,
+        model: artefact.model,
+        wayOfUse: artefact.wayOfUse
+      })
+      .where('id', artefact.id)
+  }
+  for (const indicator of example.indicators) {
+    await knex('indicator')
+      .update({
+        indicator_name: indicator.indicator_name,
+        indicator_reason: indicator.indicator_reason,
+        wayOfAnalysis: indicator.wayOfAnalysis,
+        wayOfCollection: indicator.wayOfCollection
+      })
+      .where('id', indicator.id)
+  }
   return knex('example')
     .update({
       objective: example.objective,
@@ -88,15 +94,23 @@ async function updateExample(example) {
       return result
     })
 }
-function getExampleById(id) {
-  return knex('example')
-    .join('artefacts', 'artefacts.id', 'example.artefact_id')
-    .join('indicator', 'indicator.id', 'example.indicator_id')
-    .select()
+async function getExampleById(id) {
+  const examplesJoinArtefacts = await knex('example')
+    .select('*', 'example.id as exampleId')
+    .join('example_artefact', 'example.id', 'example_artefact.example_id')
+    .join('artefacts', 'example_artefact.artefact_id', 'artefacts.id')
+    .join('users', 'users.id', 'example.author')
     .where('example.id', id)
-    .then((result) => {
-      return result
-    })
+  const examplesJoinIndicator = await knex('example')
+    .select('*', 'example.id as exampleId')
+    .join('example_indicator', 'example.id', 'example_indicator.example_id')
+    .join('indicator', 'example_indicator.example_id', 'indicator.id')
+    .where('example.id', id)
+  const mergedExample = mergeExamples(
+    examplesJoinArtefacts,
+    examplesJoinIndicator
+  )
+  return mergedExample
 }
 
 async function getExamples() {
@@ -104,6 +118,7 @@ async function getExamples() {
     .select('*', 'example.id as exampleId')
     .join('example_artefact', 'example.id', 'example_artefact.example_id')
     .join('artefacts', 'example_artefact.artefact_id', 'artefacts.id')
+    .join('users', 'users.id', 'example.author')
   const examplesJoinIndicator = await knex('example')
     .select('*', 'example.id as exampleId')
     .join('example_indicator', 'example.id', 'example_indicator.example_id')
@@ -128,71 +143,84 @@ function mergeExamples(artefacts, indicators) {
   const artefactsList = {}
   const indicatorList = {}
   const exampleList = {}
-  for (const artefact of artefacts) {
-    const exampleKeys = Object.keys(exampleList)
-    const keys = Object.keys(artefactsList)
-    if (!exampleKeys.includes(String(artefact.exampleId))) {
-      exampleList[artefact.exampleId] = {
-        id: artefact.exampleId,
-        fieldOfWork: artefact.fieldOfWork,
-        objective: artefact.objective,
-        author: artefact.author,
-        indicators: [],
-        artefacts: []
+  if (artefacts.length !== 0) {
+    for (const artefact of artefacts) {
+      const exampleKeys = Object.keys(exampleList)
+      const keys = Object.keys(artefactsList)
+      if (!exampleKeys.includes(String(artefact.exampleId))) {
+        exampleList[artefact.exampleId] = {
+          id: artefact.exampleId,
+          fieldOfWork: artefact.fieldOfWork,
+          objective: artefact.objective,
+          author: artefact.author,
+          fullName: artefact.fullName,
+          indicators: [],
+          artefacts: []
+        }
       }
-    }
-    if (!keys.includes(String(artefact.exampleId))) {
-      artefactsList[artefact.exampleId] = [
-        {
+      if (!keys.includes(String(artefact.exampleId))) {
+        artefactsList[artefact.exampleId] = [
+          {
+            id: artefact.artefact_id,
+            artefact_name: artefact.artefact_name,
+            model: artefact.model,
+            wayOfUse: artefact.wayOfUse,
+            artefact_reason: artefact.artefact_reason
+          }
+        ]
+      } else {
+        artefactsList[artefact.exampleId].push({
           id: artefact.artefact_id,
           artefact_name: artefact.artefact_name,
           model: artefact.model,
           wayOfUse: artefact.wayOfUse,
           artefact_reason: artefact.artefact_reason
-        }
-      ]
-    } else {
-      artefactsList[artefact.exampleId].push({
-        id: artefact.artefact_id,
-        artefact_name: artefact.artefact_name,
-        model: artefact.model,
-        wayOfUse: artefact.wayOfUse,
-        artefact_reason: artefact.artefact_reason
-      })
+        })
+      }
     }
   }
-  for (const indicator of indicators) {
-    const keys = Object.keys(indicatorList)
-    if (!keys.includes(String(indicator.exampleId))) {
-      indicatorList[indicator.exampleId] = [
-        {
+  if (indicators.length !== 0) {
+    for (const indicator of indicators) {
+      const keys = Object.keys(indicatorList)
+      if (!keys.includes(String(indicator.exampleId))) {
+        indicatorList[indicator.exampleId] = [
+          {
+            id: indicator.indicator_id,
+            indicator_name: indicator.indicator_name,
+            wayOfCollection: indicator.wayOfCollection,
+            wayOfAnalysis: indicator.wayOfAnalysis,
+            indicator_reason: indicator.indicator_reason
+          }
+        ]
+      } else {
+        indicatorList[indicator.exampleId].push({
           id: indicator.indicator_id,
           indicator_name: indicator.indicator_name,
           wayOfCollection: indicator.wayOfCollection,
           wayOfAnalysis: indicator.wayOfAnalysis,
           indicator_reason: indicator.indicator_reason
-        }
-      ]
-    } else {
-      indicatorList[indicator.exampleId].push({
-        id: indicator.indicator_id,
-        indicator_name: indicator.indicator_name,
-        wayOfCollection: indicator.wayOfCollection,
-        wayOfAnalysis: indicator.wayOfAnalysis,
-        indicator_reason: indicator.indicator_reason
-      })
+        })
+      }
     }
   }
   const mergedExamples = []
   for (const example in exampleList) {
     mergedExamples.push({
       ...exampleList[example],
-      indicators: [...indicatorList[example]],
-      artefacts: [...artefactsList[example]]
+      indicators: destructureIfNotEmpty(indicatorList, example),
+      artefacts: destructureIfNotEmpty(artefactsList, example)
     })
   }
 
   return mergedExamples
+}
+
+function destructureIfNotEmpty(object, key) {
+  if (Object.keys(object).length === 0) {
+    return []
+  } else {
+    return [...object[key]]
+  }
 }
 
 module.exports = {

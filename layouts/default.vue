@@ -73,42 +73,42 @@ export default {
     return {
       itemsUser: [
         {
-          title: 'Cadastrar',
-          to: { name: 'usuarios-cadastrar' }
-        },
-        {
           title: 'Visualizar',
           to: { name: 'usuarios-visualizar' }
+        },
+        {
+          title: 'Cadastrar',
+          to: { name: 'usuarios-cadastrar' }
         }
       ],
       itemsExample: [
         {
-          title: 'Cadastrar',
-          to: { name: 'exemplos-cadastrar' }
-        },
-        {
           title: 'Visualizar',
           to: { name: 'exemplos-visualizar' }
+        },
+        {
+          title: 'Cadastrar',
+          to: { name: 'exemplos-cadastrar' }
         }
       ],
       itemsNews: [
         {
-          title: 'Cadastrar',
-          to: { name: 'noticias-cadastrar' }
-        },
-        {
           title: 'Visualizar',
           to: { name: 'noticias-visualizar' }
+        },
+        {
+          title: 'Cadastrar',
+          to: { name: 'noticias-cadastrar' }
         }
       ],
       itemsEvents: [
         {
-          title: 'Cadastrar',
-          to: { name: 'eventos-cadastrar' }
-        },
-        {
           title: 'Visualizar',
           to: { name: 'eventos-visualizar' }
+        },
+        {
+          title: 'Cadastrar',
+          to: { name: 'eventos-cadastrar' }
         }
       ]
     }
@@ -136,7 +136,6 @@ export default {
 <style scoped>
 .menu-column {
   background-color: #fafafa;
-  height: 100vh;
   box-shadow: 3px 3px 3px 3px #f5f5f5;
 }
 </style>
