@@ -1,6 +1,6 @@
 <template>
   <section class="section has-text-centered">
-    <p class="title">Bem vindo a área administrativa do MOSE</p>
+    <p class="title">Bem vindo à área administrativa do MOSE</p>
     <img
       src="@/assets/logo-mose-transp.png"
       alt="Logo mose transparente"

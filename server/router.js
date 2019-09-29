@@ -37,6 +37,7 @@ api.delete('/users/:id', bodyJson, users.Delete)
 
 // Examples routes
 api.get('/examples', bodyJson, examples.List)
+api.get('/examples/fields', bodyJson, examples.ListFields)
 api.get('/examples/:id', bodyJson, examples.Show)
 api.post('/examples', bodyJson, examples.Create)
 api.put('/examples/:id', bodyJson, examples.Update)

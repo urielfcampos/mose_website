@@ -5,10 +5,11 @@
       <h1 class="text title has-text-centered">{{ title }}</h1>
       <form @submit.prevent="validateForm">
         <section class="section">
-          <b-field label="Objetivo de competência">
+          <b-field v-if="formStage >= 1" label="Objetivo de competência">
             <b-select
               v-model="example.objective"
               placeholder="Selecione um objetivo de competência"
+              @input="moveFormStage"
             >
               <optgroup
                 v-for="(objectives, objectiveName) in objectiveCompetencies"
@@ -25,7 +26,7 @@
               </optgroup>
             </b-select>
           </b-field>
-          <b-field label="Área de Atuação">
+          <b-field v-if="formStage >= 2" label="Área de Atuação">
             <b-autocomplete
               v-model="example.fieldOfWork"
               :data="autoFieldOfWork"
@@ -35,7 +36,14 @@
             ></b-autocomplete>
           </b-field>
         </section>
-        <b-tabs v-model="activeTab" position="is-centered">
+        <b-field class="has-text-centered">
+          <b-button type="is-info" @click="validateExample">Pesquisar</b-button>
+        </b-field>
+        <b-tabs
+          v-if="formStage === 3"
+          v-model="activeTab"
+          position="is-centered"
+        >
           <b-tab-item label="Artefato">
             <b-field label="Nome">
               <b-input v-model="artefact.artefact_name" required></b-input>
@@ -169,7 +177,12 @@
         </b-tabs>
 
         <br />
-        <b-button type="submit" class="btn is-info" @click="validateForm">
+        <b-button
+          :disabled="canSubmit"
+          type="submit"
+          class="btn is-info"
+          @click="validateForm"
+        >
           {{ exampleFormButton }}
         </b-button>
       </form>
@@ -227,7 +240,9 @@ export default {
         indicator_reason: ''
       },
       editingArtefact: false,
-      editingIndicator: false
+      editingIndicator: false,
+      formStage: 1,
+      canSubmit: true
     }
   },
   computed: {
@@ -292,7 +307,7 @@ export default {
     },
     getFields() {
       this.$axios
-        .get('/api/users/fields')
+        .get('/api/examples/fields')
         .then((res) => {
           const fields = [...res.data]
           for (const field in fields) {
@@ -389,6 +404,18 @@ export default {
       this.$axios.get(`/api/examples/${id}`).then((res) => {
         this.example = res.data[0]
       })
+    },
+    moveFormStage() {
+      this.formStage = 2
+    },
+    validateExample() {
+      const params = {
+        params: {
+          fieldOfWork: this.example.fieldOfWork,
+          objective: this.example.objective
+        }
+      }
+      this.$axios.get('/api/examples', params)
     }
   }
 }

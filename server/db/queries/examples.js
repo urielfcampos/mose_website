@@ -223,10 +223,15 @@ function destructureIfNotEmpty(object, key) {
   }
 }
 
+async function getExampleFields() {
+  const result = await knex('example').distinct('fieldOfWork')
+  return result
+}
 module.exports = {
   addExample,
   getExampleById,
   getExamples,
   updateExample,
-  deleteExample
+  deleteExample,
+  getExampleFields
 }
