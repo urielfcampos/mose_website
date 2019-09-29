@@ -4,6 +4,7 @@ exports.up = function(knex) {
     table.string('objective')
     table.string('fieldOfWork')
     table.integer('author').unsigned()
+    table.unique(['objective', 'fieldOfWork'])
   })
 }
 

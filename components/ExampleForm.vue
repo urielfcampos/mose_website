@@ -36,7 +36,7 @@
             ></b-autocomplete>
           </b-field>
         </section>
-        <b-field class="has-text-centered">
+        <b-field v-if="formStage === 2" class="has-text-centered">
           <b-button type="is-info" @click="validateExample">Pesquisar</b-button>
         </b-field>
         <b-tabs
@@ -94,7 +94,7 @@
                     icon-left="pencil"
                     @click="editArtefact(index)"
                   >
-                    {{ editingArtefact ? 'Finalizar edição' : 'Editar' }}
+                    {{ editingArtefact === index ? 'Editar' : 'Visualizar' }}
                   </b-button>
                 </p>
                 <p class="control">
@@ -160,7 +160,9 @@
                     icon-left="pencil"
                     @click="editIndicator(index)"
                   >
-                    {{ editingIndicator ? 'Finalizar edição' : 'Editar' }}
+                    {{
+                      editingIndicator === index ? 'Finalizar edição' : 'Editar'
+                    }}
                   </b-button>
                 </p>
                 <p class="control">
@@ -177,12 +179,7 @@
         </b-tabs>
 
         <br />
-        <b-button
-          :disabled="canSubmit"
-          type="submit"
-          class="btn is-info"
-          @click="validateForm"
-        >
+        <b-button type="submit" class="btn is-info" @click="validateForm">
           {{ exampleFormButton }}
         </b-button>
       </form>
@@ -239,8 +236,8 @@ export default {
         wayOfAnalysis: '',
         indicator_reason: ''
       },
-      editingArtefact: false,
-      editingIndicator: false,
+      editingArtefact: null,
+      editingIndicator: null,
       formStage: 1,
       canSubmit: true
     }
@@ -266,6 +263,9 @@ export default {
   },
   created() {
     this.getFields()
+    if (this.update) {
+      this.formStage = 3
+    }
   },
   methods: {
     validateForm() {
@@ -350,27 +350,27 @@ export default {
     },
     editArtefact(index) {
       this.artefact = this.example.artefacts[index]
-      if (this.editingArtefact === true) {
+      if (this.editingArtefact === index) {
         this.example.artefacts[index] = Object.assign({}, this.artefact)
-        this.editingArtefact = false
+        this.editingArtefact = null
         Object.keys(this.artefact).forEach((element) => {
           this.artefact[element] = ''
         })
         return
       }
-      this.editingArtefact = true
+      this.editingArtefact = index
     },
     editIndicator(index) {
       this.indicator = this.example.indicators[index]
-      if (this.editingIndicator === true) {
+      if (this.editingIndicator === index) {
         this.example.indicators[index] = Object.assign({}, this.indicator)
-        this.editingIndicator = false
+        this.editingIndicator = null
         Object.keys(this.indicator).forEach((element) => {
           this.indicator[element] = ''
         })
         return
       }
-      this.editingIndicator = true
+      this.editingIndicator = index
     },
     deleteArtefact(index) {
       this.example.artefacts.splice(index, 1)
@@ -415,7 +415,29 @@ export default {
           objective: this.example.objective
         }
       }
-      this.$axios.get('/api/examples', params)
+      this.$axios
+        .get('/api/examples', params)
+        .then((res) => {
+          this.canSubmit = !this.canSubmit
+          this.formStage = 3
+          if (res.data.length >= 1) {
+            this.$toast.open('Editando exemplo existente.')
+            this.example.indicators = res.data[0].indicators
+            this.example.artefacts = res.data[0].artefacts
+          } else {
+            this.$dialog.confirm({
+              message: 'Criar um novo exemplo ?',
+              onConfirm: () => {
+                this.$toast.open('Cadastrando novo exemplo')
+              }
+            })
+          }
+        })
+        .catch((err) => {
+          this.notificationHandler.openDangerToast(
+            this.errorMessage(err.response.data.code)
+          )
+        })
     }
   }
 }
