@@ -4,45 +4,45 @@
       <div class="columns">
         <div class="column is-half is-offset-one-quarter">
           <div v-for="(singleNews, index) in news" :key="index">
-            <div class="card">
-              <header class="card-header">
-                <p class="card-header-title">
-                  {{ singleNews.title }}
+            <CardComponent :title="singleNews.title">
+              <template v-slot:content>
+                <p>
+                  {{ getSummaryNews(singleNews.bodyText) }}
                 </p>
-                <a href="#" class="card-header-icon" aria-label="more options">
-                  <span class="icon">
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                  </span>
-                </a>
-              </header>
-              <div class="card-content">
-                <div class="content" style="word-wrap:break-word">
-                  <p>{{ getSummaryNews(singleNews.bodyText) }}</p>
-                  <br />
-                  <time :datetime="getData">{{ getData }}</time>
-                </div>
-              </div>
-              <footer class="card-footer">
-                <a href="#" class="card-footer-item">Ver notícia</a>
-              </footer>
-            </div>
+              </template>
+              <template v-slot:footer>
+                <a
+                  class="card-footer-item"
+                  @click="showExpandedNews(singleNews)"
+                  >Ver notícia</a
+                >
+              </template>
+            </CardComponent>
             <br />
           </div>
         </div>
       </div>
     </section>
+    <b-modal :active.sync="showDetailedNews">
+      <DetailedNews :selected-news="selectedNews"></DetailedNews>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import { errorHandler } from '~/front/mixins/errorHandler'
 import { notificationHandler } from '~/front/mixins/notificationHandler'
+import CardComponent from '~/components/CardComponent'
+import DetailedNews from '~/components/DetailedNews'
 export default {
+  components: { CardComponent, DetailedNews },
   mixins: [errorHandler, notificationHandler],
   layout: 'public',
   data() {
     return {
-      news: []
+      news: [],
+      selectedNews: {},
+      showDetailedNews: false
     }
   },
   computed: {
@@ -67,6 +67,10 @@ export default {
     getSummaryNews(newsText) {
       const splitString = newsText.split('.')
       return splitString[0].concat('...')
+    },
+    showExpandedNews(singleNews) {
+      this.selectedNews = singleNews
+      this.showDetailedNews = true
     }
   }
 }

@@ -46,8 +46,8 @@ export default {
         name: '',
         summary: '',
         local: '',
-        time: '',
-        date: ''
+        time: new Date(),
+        date: new Date()
       }
     }
   },

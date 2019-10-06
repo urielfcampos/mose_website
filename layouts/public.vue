@@ -20,30 +20,27 @@
 
       <div id="navbarBasicExample" class="navbar-menu">
         <div class="navbar-start">
-          <nuxt-link class="navbar-item" :to="{ name: 'public-noticias' }">
+          <nuxt-link
+            class="navbar-item"
+            :to="{ name: 'public-noticias' }"
+            exact-active-class="is-active"
+          >
             Noticias
           </nuxt-link>
-
-          <nuxt-link class="navbar-item" :to="{ name: 'public-eventos' }">
+          <nuxt-link
+            class="navbar-item"
+            :to="{ name: 'public-eventos' }"
+            exact-active-class="is-active"
+          >
             Eventos
           </nuxt-link>
-          <div class="navbar-item has-dropdown is-hoverable">
-            <a class="navbar-link">
-              Exemplos
-            </a>
-
-            <div class="navbar-dropdown">
-              <nuxt-link class="navbar-item" :to="{ name: 'public-artefatos' }">
-                Artefatos
-              </nuxt-link>
-              <nuxt-link
-                class="navbar-item"
-                :to="{ name: 'public-indicadores' }"
-              >
-                Indicadores
-              </nuxt-link>
-            </div>
-          </div>
+          <nuxt-link
+            class="navbar-item"
+            :to="{ name: 'public-exemplos' }"
+            exact-active-class="is-active"
+          >
+            Exemplos
+          </nuxt-link>
         </div>
         <div class="navbar-end">
           <nuxt-link class="navbar-item has-text-danger" :to="{ path: '/' }">

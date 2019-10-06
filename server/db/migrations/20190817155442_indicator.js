@@ -2,9 +2,9 @@ exports.up = function(knex) {
   return knex.schema.createTable('indicator', (table) => {
     table.increments()
     table.string('indicator_name')
-    table.string('wayOfCollection')
-    table.string('wayOfAnalysis')
-    table.string('indicator_reason')
+    table.string('wayOfCollection', 30000)
+    table.string('wayOfAnalysis', 30000)
+    table.string('indicator_reason', 30000)
   })
 }
 

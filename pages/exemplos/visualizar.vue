@@ -26,7 +26,7 @@
     <b-modal :active.sync="editExampleActivate" @close="getExamples">
       <div class="box">
         <ExampleForm
-          title="Editar exemplo"
+          title="Exemplo"
           :selected-example="selectedExample"
           :update="true"
           @updated-example.native="getExamples"
