@@ -149,11 +149,7 @@ async function getExamples() {
   const examplesJoinIndicator = await knex('example')
     .select('*', 'example.id as exampleId')
     .join('example_indicator', 'example.id', 'example_indicator.example_id')
-    .join('indicator', 'example_indicator.example_id', 'indicator.id')
-  // eslint-disable-next-line no-console
-  console.log({ exampleArtefacts: examplesJoinArtefacts })
-  // eslint-disable-next-line no-console
-  console.log({ exampleIndicators: examplesJoinIndicator })
+    .join('indicator', 'example_indicator.indicator_id', 'indicator.id')
   const mergedExample = mergeExamples(
     examplesJoinArtefacts,
     examplesJoinIndicator
@@ -206,7 +202,6 @@ function mergeExamples(artefacts, indicators) {
         id: artefact.exampleId,
         fieldOfWork: artefact.fieldOfWork,
         objective: artefact.objective,
-        author: artefact.author,
         indicators: [],
         artefacts: []
       }
@@ -265,8 +260,6 @@ function mergeExamples(artefacts, indicators) {
     }
   }
   const mergedExamples = []
-  // eslint-disable-next-line no-console
-  console.log({ examples: artefactsList })
   for (const example in exampleList) {
     mergedExamples.push({
       ...exampleList[example],
