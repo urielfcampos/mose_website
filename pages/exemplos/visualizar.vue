@@ -29,6 +29,7 @@
           title="Exemplo"
           :selected-example="selectedExample"
           :update="true"
+          :stage="3"
           @updated-example.native="getExamples"
         />
       </div>

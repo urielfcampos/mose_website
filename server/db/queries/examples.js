@@ -79,8 +79,6 @@ async function updateExample(example) {
   const artefactIds = []
   const indicatorIds = []
   for (const artefact of example.artefacts) {
-    // eslint-disable-next-line no-console
-    console.log(artefact)
     if (artefact.hasOwnProperty('id')) {
       await knex('artefacts')
         .update({
@@ -130,7 +128,6 @@ async function getExampleById(id) {
     .select('*', 'example.id as exampleId')
     .join('example_artefact', 'example.id', 'example_artefact.example_id')
     .join('artefacts', 'example_artefact.artefact_id', 'artefacts.id')
-    .join('users', 'users.id', 'example.author')
     .where('example.id', id)
   const examplesJoinIndicator = await knex('example')
     .select('*', 'example.id as exampleId')
@@ -149,11 +146,14 @@ async function getExamples() {
     .select('*', 'example.id as exampleId')
     .join('example_artefact', 'example.id', 'example_artefact.example_id')
     .join('artefacts', 'example_artefact.artefact_id', 'artefacts.id')
-    .join('users', 'users.id', 'example.author')
   const examplesJoinIndicator = await knex('example')
     .select('*', 'example.id as exampleId')
     .join('example_indicator', 'example.id', 'example_indicator.example_id')
     .join('indicator', 'example_indicator.example_id', 'indicator.id')
+  // eslint-disable-next-line no-console
+  console.log({ exampleArtefacts: examplesJoinArtefacts })
+  // eslint-disable-next-line no-console
+  console.log({ exampleIndicators: examplesJoinIndicator })
   const mergedExample = mergeExamples(
     examplesJoinArtefacts,
     examplesJoinIndicator
@@ -174,7 +174,6 @@ async function getExamplesByFieldAndObjective(query) {
     .select('*', 'example.id as exampleId')
     .join('example_artefact', 'example.id', 'example_artefact.example_id')
     .join('artefacts', 'example_artefact.artefact_id', 'artefacts.id')
-    .join('users', 'users.id', 'example.author')
     .where({
       'example.fieldOfWork': fieldOfWork,
       'example.objective': objective
@@ -208,7 +207,6 @@ function mergeExamples(artefacts, indicators) {
         fieldOfWork: artefact.fieldOfWork,
         objective: artefact.objective,
         author: artefact.author,
-        fullName: artefact.fullName,
         indicators: [],
         artefacts: []
       }
@@ -242,8 +240,6 @@ function mergeExamples(artefacts, indicators) {
         id: indicator.exampleId,
         fieldOfWork: indicator.fieldOfWork,
         objective: indicator.objective,
-        author: indicator.author,
-        fullName: indicator.fullName,
         indicators: [],
         artefacts: []
       }
@@ -269,6 +265,8 @@ function mergeExamples(artefacts, indicators) {
     }
   }
   const mergedExamples = []
+  // eslint-disable-next-line no-console
+  console.log({ examples: artefactsList })
   for (const example in exampleList) {
     mergedExamples.push({
       ...exampleList[example],
@@ -281,11 +279,13 @@ function mergeExamples(artefacts, indicators) {
 }
 
 function destructureIfNotEmpty(object, key) {
-  if (Object.keys(object).length === 0) {
-    return []
-  } else {
-    return [...object[key]]
-  }
+  try {
+    if (Object.keys(object).length === 0) {
+      return []
+    } else {
+      return [...object[key]]
+    }
+  } catch (error) {}
 }
 
 async function getExampleFields() {

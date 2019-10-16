@@ -200,6 +200,7 @@ export default {
       type: Object,
       default: function() {
         return {
+          id: null,
           objective: '',
           fieldOfWork: '',
           artefacts: [],
@@ -212,9 +213,13 @@ export default {
       type: String,
       default: ''
     },
-    update: {
+    canUpdate: {
       type: Boolean,
       default: false
+    },
+    stage: {
+      type: Number,
+      default: 1
     }
   },
   data() {
@@ -238,8 +243,9 @@ export default {
       },
       editingArtefact: null,
       editingIndicator: null,
-      formStage: 1,
-      canSubmit: true
+      formStage: this.stage,
+      canSubmit: true,
+      update: this.canUpdate
     }
   },
   computed: {
@@ -288,6 +294,8 @@ export default {
         return
       }
       if (this.update) {
+        // eslint-disable-next-line no-console
+        console.log(this.example)
         this.updateExample(this.example.id)
       } else this.sendForm()
     },
@@ -422,6 +430,8 @@ export default {
           this.formStage = 3
           if (res.data.length >= 1) {
             this.$toast.open('Editando exemplo existente.')
+            this.update = true
+            this.example.id = res.data[0].id
             this.example.indicators = res.data[0].indicators
             this.example.artefacts = res.data[0].artefacts
           } else {
