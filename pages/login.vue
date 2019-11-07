@@ -5,7 +5,9 @@
         <div class="columns is-centered">
           <div class="column is-4 is-mobile">
             <figure class="image is-square">
-              <img src="~/assets/logo-mose-transp.png" alt="Logo mose" />
+              <nuxt-link :to="{ name: 'public' }">
+                <img src="~/assets/logo-mose-transp.png" alt="Logo mose" />
+              </nuxt-link>
             </figure>
             <br />
             <form class="container" @submit.prevent="handleLogin">

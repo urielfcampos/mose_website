@@ -11,6 +11,7 @@
           aria-label="menu"
           aria-expanded="false"
           data-target="navbarBasicExample"
+          @click="toggleMenu"
         >
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
@@ -18,7 +19,11 @@
         </a>
       </div>
 
-      <div id="navbarBasicExample" class="navbar-menu">
+      <div
+        id="navbarBasicExample"
+        class="navbar-menu"
+        :class="{ 'is-active': toggle }"
+      >
         <div class="navbar-start">
           <nuxt-link
             class="navbar-item"
@@ -54,7 +59,18 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      toggle: false
+    }
+  },
+  methods: {
+    toggleMenu() {
+      this.toggle = !this.toggle
+    }
+  }
+}
 </script>
 
 <style></style>
