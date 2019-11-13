@@ -86,12 +86,21 @@ export default {
     getEvents() {
       this.$axios.get('/api/events').then((res) => {
         this.events = [...res.data]
+        this.formatDate()
       })
     },
     editEvents(singleEvents) {
       singleEvents.data = new Date(singleEvents.data)
       this.editEventsActivate = true
       this.selectedEvents = Object.assign({}, singleEvents)
+    },
+    formatDate() {
+      this.events.forEach((element) => {
+        const date = new Date(element.date)
+        // eslint-disable-next-line no-console
+        console.log(date)
+        element.date = date.toLocaleDateString('pt-br')
+      })
     },
     updateEvents(id) {
       this.$axios

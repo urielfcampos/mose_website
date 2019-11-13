@@ -77,6 +77,15 @@ export default {
     getNews() {
       this.$axios.get('/api/news').then((res) => {
         this.news = [...res.data]
+        this.formatDate()
+      })
+    },
+    formatDate() {
+      this.news.forEach((element) => {
+        const date = new Date(element.data)
+        // eslint-disable-next-line no-console
+        console.log(date)
+        element.data = date.toLocaleDateString('pt-br')
       })
     },
     editNews(singleNews) {

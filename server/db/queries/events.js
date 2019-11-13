@@ -20,6 +20,7 @@ function getEvents() {
   return knex('events')
     .join('users', 'users.id', 'events.author')
     .select(
+      'events.id',
       'events.name',
       'events.summary',
       'events.local',
