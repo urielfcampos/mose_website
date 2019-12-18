@@ -23,7 +23,7 @@
         </section>
       </template>
     </b-table>
-    <b-modal :active.sync="editEventsActivate">
+    <b-modal :active.sync="editEventActivate">
       <div class="container box">
         <b-field label="Nome do evento.">
           <b-input v-model="selectedEvent.name" required></b-input>
@@ -38,6 +38,10 @@
         </b-field>
         <b-field label="Local do evento.">
           <b-input v-model="selectedEvent.local" required></b-input>
+        </b-field>
+        <b-field label="Data">
+          <b-datepicker v-model="selectedEvent.date" icon="calendar-today">
+          </b-datepicker>
         </b-field>
         <b-field label="Horário">
           <b-timepicker
@@ -73,7 +77,7 @@ export default {
         { field: 'name', label: 'Nome do Evento' },
         { field: 'local', label: 'Local' },
         { field: 'fullName', label: 'Autor' },
-        { field: 'date', label: 'Data' }
+        { field: 'data', label: 'Data' }
       ],
       editEventActivate: false,
       selectedEvent: {}
@@ -90,16 +94,22 @@ export default {
       })
     },
     editEvents(singleEvents) {
-      singleEvents.data = new Date(singleEvents.data)
-      this.editEventsActivate = true
-      this.selectedEvents = Object.assign({}, singleEvents)
+      const time = singleEvents.time.split(':')
+      // eslint-disable-next-line no-console
+      console.log(time)
+      singleEvents.date = new Date(singleEvents.date)
+      singleEvents.time = new Date()
+      singleEvents.time.setHours(time[0])
+      singleEvents.time.setMinutes(time[1])
+      this.editEventActivate = true
+      this.selectedEvent = Object.assign({}, singleEvents)
     },
     formatDate() {
       this.events.forEach((element) => {
         const date = new Date(element.date)
         // eslint-disable-next-line no-console
         console.log(date)
-        element.date = date.toLocaleDateString('pt-br')
+        element.data = date.toLocaleDateString('pt-br')
       })
     },
     updateEvents(id) {
